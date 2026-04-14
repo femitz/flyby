@@ -9,13 +9,6 @@
     "swift-dependencies": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/SystemMonitorApp.swiftdeps",
     "diagnostics": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/SystemMonitorApp.dia"
   },
-  "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Models/SystemMetrics.swift": {
-    "dependencies": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/SystemMetrics.d",
-    "object": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/SystemMetrics.swift.o",
-    "swiftmodule": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/SystemMetrics~partial.swiftmodule",
-    "swift-dependencies": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/SystemMetrics.swiftdeps",
-    "diagnostics": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/SystemMetrics.dia"
-  },
   "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Services/SystemMonitorService.swift": {
     "dependencies": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/SystemMonitorService.d",
     "object": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/SystemMonitorService.swift.o",
@@ -36,13 +29,6 @@
     "swiftmodule": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/CPUChartView~partial.swiftmodule",
     "swift-dependencies": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/CPUChartView.swiftdeps",
     "diagnostics": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/CPUChartView.dia"
-  },
-  "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/GPUChartView.swift": {
-    "dependencies": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/GPUChartView.d",
-    "object": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/GPUChartView.swift.o",
-    "swiftmodule": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/GPUChartView~partial.swiftmodule",
-    "swift-dependencies": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/GPUChartView.swiftdeps",
-    "diagnostics": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/GPUChartView.dia"
   },
   "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/RAMChartView.swift": {
     "dependencies": "/Users/mitz/Documents/Development/flyby/.build/index-build/arm64-apple-macosx/debug/SystemMonitor.build/RAMChartView.d",

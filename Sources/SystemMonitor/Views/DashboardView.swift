@@ -18,10 +18,13 @@ struct DashboardView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
-                    CPUChartView(metrics: service.metrics)
-                    RAMChartView(metrics: service.metrics)
-                    GPUChartView(metrics: service.metrics)
-                    ThermalStateView(thermalState: service.metrics.thermalState)
+                    CPUChartView(
+                        cpuUsage: service.cpuUsage,
+                        ramUsage: service.ramUsage,
+                        ramUsedGB: service.ramUsedGB,
+                        ramTotalGB: service.ramTotalGB
+                    )
+                    ThermalStateView(thermalState: service.thermalState)
                 }
                 .padding()
             }
@@ -30,7 +33,7 @@ struct DashboardView: View {
             
             VStack(spacing: 12) {
                 HStack {
-                    Text("Intervalo de atualização:")
+                    Text("Refresh:")
                         .foregroundColor(.secondary)
                     Picker("", selection: $selectedInterval) {
                         ForEach(intervals, id: \.self) { interval in
@@ -45,7 +48,7 @@ struct DashboardView: View {
                 }
                 .padding(.horizontal)
                 
-                Toggle("Iniciar automaticamente ao login", isOn: $launchAtLogin)
+                Toggle("Launch at Login", isOn: $launchAtLogin)
                     .padding(.horizontal)
                     .onChange(of: launchAtLogin) { newValue in
                         setLaunchAtLogin(enabled: newValue)

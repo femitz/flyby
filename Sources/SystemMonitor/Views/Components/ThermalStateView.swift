@@ -1,31 +1,31 @@
 import SwiftUI
 
 struct ThermalStateView: View {
-    let thermalState: ThermalState
+    let thermalState: SystemThermalState
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Thermal State")
+                Label("Thermal State", systemImage: "thermometer")
                     .font(.headline)
                 Spacer()
                 ThermalIndicator(state: thermalState)
             }
             
             HStack(spacing: 12) {
-                ForEach(ThermalState.allCases, id: \.self) { state in
+                ForEach(SystemThermalState.allCases, id: \.self) { state in
                     VStack(spacing: 4) {
                         Text(state.icon)
-                            .font(.title)
+                            .font(.title2)
                         Text(state.rawValue)
-                            .font(.caption)
+                            .font(.caption2)
                     }
                     .padding(8)
-                    .background(state == thermalState ? state.colorValue.opacity(0.3) : Color.clear)
+                    .background(state == thermalState ? state.color.opacity(0.2) : Color.clear)
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(state == thermalState ? state.colorValue : Color.clear, lineWidth: 2)
+                            .stroke(state == thermalState ? state.color : Color.clear, lineWidth: 2)
                     )
                 }
             }
@@ -42,19 +42,19 @@ struct ThermalStateView: View {
     private var description: String {
         switch thermalState {
         case .nominal:
-            return "Sistema operando em temperatura normal."
+            return "System operating at normal temperature."
         case .fair:
-            return "Sistema operando com temperatura elevada. Considere reduzir carga de trabalho."
+            return "System running warm. Consider reducing workload."
         case .serious:
-            return "Sistema quente. Alguns recursos podem estar受限icos."
+            return "System is hot. Some resources may be throttled."
         case .critical:
-            return "Sistema em temperaturas críticas. Reduza a carga imediatamente."
+            return "System at critical temperature. Reduce load immediately."
         }
     }
 }
 
 struct ThermalIndicator: View {
-    let state: ThermalState
+    let state: SystemThermalState
     
     var body: some View {
         HStack(spacing: 4) {
@@ -62,25 +62,10 @@ struct ThermalIndicator: View {
             Text(state.rawValue)
                 .fontWeight(.semibold)
         }
-        .foregroundColor(state.colorValue)
+        .foregroundColor(state.color)
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
-        .background(state.colorValue.opacity(0.2))
+        .background(state.color.opacity(0.2))
         .cornerRadius(8)
-    }
-}
-
-extension ThermalState {
-    var colorValue: Color {
-        switch self {
-        case .nominal:
-            return .green
-        case .fair:
-            return .yellow
-        case .serious:
-            return .orange
-        case .critical:
-            return .red
-        }
     }
 }

@@ -16,10 +16,7 @@ let package = Package(
         .executableTarget(
             name: "SystemMonitor",
             dependencies: [],
-            path: "Sources/SystemMonitor",
-            resources: [
-                .process("Resources")
-            ]
+            path: "Sources/SystemMonitor"
         )
     ]
 )

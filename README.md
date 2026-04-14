@@ -1,153 +1,113 @@
 # SystemMonitor
 
-Monitoramento de sistema em tempo real para macOS (Apple Silicon M1+/M2+).
+Real-time system monitoring app for macOS (Apple Silicon M1+/M2+).
 
-## Recursos
+## Features
 
-- **CPU %** - Uso de processador
-- **RAM %** - Uso de memória
-- **GPU %** - Uso de GPU (best effort)
-- **Thermal State** - Estado térmico do sistema
-- **Menu Bar** - Exibição na barra de menus
-- **Dashboard** - Janela com gráficos detalhados
-- **Auto-login** - Iniciar com o sistema
+- **CPU %** - Processor usage via Mach APIs
+- **RAM %** - Memory usage via vm_statistics64  
+- **Thermal State** - System thermal state (official API)
+- **Menu Bar** - Always visible in menu bar
+- **Dashboard** - Detailed view with charts
+- **Auto-login** - Launch at login option
+- **Configurable** - Adjustable refresh interval
 
-## Requisitos
+## Requirements
 
-- macOS 13.0 (Ventura) ou superior
+- macOS 13.0 (Ventura) or later
 - Apple Silicon (M1, M2, M3, M4, M5)
 - Xcode 15.3+
 
-## Instalação
+## Installation
 
-### Pré-requisitos
+### 1. Install Command Line Tools (if needed)
+```bash
+xcode-select --install
+```
 
-1. **Instalar Xcode** (se não tiver):
-   ```bash
-   xcode-select --install
-   ```
+### 2. Build
+```bash
+cd SystemMonitor
+swift build -c release
+```
 
-2. **Instalar Command Line Tools**:
-   ```bash
-   xcode-select --install
-   ```
+### 3. Install
+```bash
+cp .build/release/SystemMonitor /Applications/SystemMonitor
+chmod +x /Applications/SystemMonitor
+```
 
-### Compilação
-
-1. Clone ou faça download deste projeto:
-   ```bash
-   cd SystemMonitor
-   ```
-
-2. Compile o projeto:
-   ```bash
-   swift build -c release
-   ```
-
-3. O executável será criado em:
-   ```
-   .build/release/SystemMonitor
-   ```
-
-### Instalação do App
-
-1. Copie o executável para Applications:
-   ```bash
-   cp .build/release/SystemMonitor /Applications/SystemMonitor
-   ```
-
-2. Dê permissão de execução:
-   ```bash
-   chmod +x /Applications/SystemMonitor
-   ```
-
-3. (Opcional) Adicione ao Login Items:
-   - Abra **System Preferences** > **Users & Groups** > **Login Items**
-   - Clique em **+** e adicione SystemMonitor
-
-### Executando
-
-Execute diretamente:
+### 4. Run
 ```bash
 /Applications/SystemMonitor
 ```
 
-Ou pelo Xcode:
-```bash
-open SystemMonitor.xcodeproj
-```
- ثم اضغط **Run** (⌘R)
+Or open from Finder:
+- Go to `/Applications`
+- Double-click SystemMonitor
+- If prompted about "unidentified developer", right-click > Open > Open
 
-## Uso
+### 5. Add to Login Items (optional)
+- System Settings > General > Login Items
+- Click + and add SystemMonitor
+
+## How It Works
 
 ### Menu Bar
-
-O app aparece na barra de menus mostrando:
+The app displays in your menu bar:
 ```
-CPU: 12% | RAM: 47% | 🟢
+CPU: 12% | RAM: 47% | ●
 ```
-
-Clique para abrir o Dashboard.
+- Click to open Dashboard
+- Updates every 5 seconds (configurable)
 
 ### Dashboard
+Shows:
+- CPU usage chart
+- Memory usage chart  
+- Thermal state indicator
+- Settings (refresh interval, auto-login)
 
-- **CPU** - Gráfico de barras com uso
-- **RAM** - Gráfico com uso de memória
-- **GPU** - Uso de GPU (estimado)
-- **Thermal State** - Estado térmico com indicadores de cor
+### Thermal State
+| State | Description |
+|-------|------------|
+| ● Nominal | Normal temperature |
+| ◐ Fair | Running warm |
+| ◑ Serious | Hot, may throttle |
+| ◉ Critical | Reduce load immediately |
 
-### Configurações
+Note: Apple does NOT provide a public API for actual temperature readings. Thermal state is the official API available.
 
-- **Intervalo de atualização** - 1s, 2s, 5s, 10s, 30s (padrão: 5s)
-- **Iniciar automaticamente** - Toggle para auto-login
-
-## Solução de Problemas
-
-### "App não pode ser aberto porque é de desenvolvedor desconhecido"
-
-1. Clique direito no app
-2. Escolha "Open"
-3. Clique "Open" novamente na dialog
-
-### Thermal State não mostra temperaturas
-
-O Thermal State usa a API oficial da Apple (`ProcessInfo.thermalState`) que retorna níveis, não temperaturas precisas. Isso é por design da Apple.
-
-### GPU mostra 0% ou não disponível
-
-A medição de GPU em Apple Silicon usa APIs não oficiais. Alguns modelos podem não retornar valores precisos.
-
-## Arquitetura
+## Project Structure
 
 ```
 SystemMonitor/
 ├── Sources/SystemMonitor/
-│   ├── App/SystemMonitorApp.swift      # App principal
-│   ├── Models/SystemMetrics.swift      # Modelos de dados
-│   ├── Services/SystemMonitorService.swift  # Serviço de monitoramento
+│   ├── App/SystemMonitorApp.swift      # Main app + menu bar
+│   ├── Services/SystemMonitorService.swift  # Monitoring logic
 │   ├── Views/
-│   │   ├── DashboardView.swift         # Janela principal
+│   │   ├── DashboardView.swift       # Main dashboard
 │   │   └── Components/
 │   │       ├── CPUChartView.swift
 │   │       ├── RAMChartView.swift
-│   │       ├── GPUChartView.swift
 │   │       └── ThermalStateView.swift
-│   └── Utilities/Settings.swift     # Configurações
-└── Resources/Assets.xcassets
+│   └── Utilities/Settings.swift       # Settings
+└── Package.swift
 ```
 
-## Tecnologias
+## Troubleshooting
 
-- **SwiftUI** - Interface nativa Apple
-- **Swift Charts** - Gráficos (macOS 13+)
-- **IOKit** - Acesso a sensores
-- **Mach APIs** - CPU/RAM stats
-- **ServiceManagement** - Auto-login
+### "App cannot be opened because it is from an unidentified developer"
+1. Right-click the app in Finder
+2. Select "Open"
+3. Click "Open" in the dialog
 
-## Licença
+### CPU/RAM showing 0%
+The app needs a second refresh cycle to calculate CPU usage. Wait 10 seconds for accurate readings.
+
+### Thermal shows "Nominal" always
+This is expected - Apple Silicon Macs rarely reach elevated thermal states under normal use.
+
+## License
 
 MIT License
-
-## Autor
-
-Feito com SwiftUI para macOS

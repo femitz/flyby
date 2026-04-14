@@ -1,12 +1,11 @@
 import SwiftUI
 import AppKit
+import Charts
 
 final class StatusBarController: NSObject, ObservableObject {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
     private let service: SystemMonitorService
-    
-    @Published var metrics: SystemMetrics = .empty
     
     init(service: SystemMonitorService) {
         self.service = service
@@ -14,16 +13,13 @@ final class StatusBarController: NSObject, ObservableObject {
         setupStatusBar()
         setupPopover()
         
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
             self?.updateTitle()
         }
     }
     
     private func setupStatusBar() {
         statusItem = NSStatusBar.system.statusItem(withLength: 180)
-        if let button = statusItem?.button {
-            button.title = "CPU: 0% | RAM: 0% | 🟢"
-        }
     }
     
     private func setupPopover() {
@@ -40,14 +36,18 @@ final class StatusBarController: NSObject, ObservableObject {
                 popover.performClose(nil)
             } else {
                 popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+                NSApp.activate(ignoringOtherApps: true)
             }
         }
     }
     
     private func updateTitle() {
-        let cpu = service.metrics.cpuUsagePercent
-        let ram = service.metrics.ramUsagePercent
-        let thermal = service.metrics.thermalState.icon
-        statusItem?.button?.title = "CPU: \(cpu)% | RAM: \(ram)% | \(thermal)"
+        let cpu = Int(service.cpuUsage * 100)
+        let ram = Int(service.ramUsage * 100)
+        let thermal = service.thermalState.icon
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.statusItem?.button?.title = "CPU: \(cpu)% | RAM: \(ram)% | \(thermal)"
+        }
     }
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 import AppKit
 import ServiceManagement
+import Charts
 
 @main
 struct SystemMonitorApp: App {
@@ -64,9 +65,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func updateButtonTitle() {
-        let cpu = service.metrics.cpuUsagePercent
-        let ram = service.metrics.ramUsagePercent
-        let thermal = service.metrics.thermalState.icon
+        let cpu = Int(service.cpuUsage * 100)
+        let ram = Int(service.ramUsage * 100)
+        let thermal = service.thermalState.icon
         
         DispatchQueue.main.async { [weak self] in
             self?.statusItem?.button?.title = "CPU: \(cpu)% | RAM: \(ram)% | \(thermal)"

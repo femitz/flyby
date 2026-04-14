@@ -2,15 +2,17 @@ import SwiftUI
 import Charts
 
 struct RAMChartView: View {
-    let metrics: SystemMetrics
+    let ramUsage: Double
+    let ramUsedGB: Double
+    let ramTotalGB: Double
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("RAM")
+                Label("Memory", systemImage: "memorychip")
                     .font(.headline)
                 Spacer()
-                Text("\(metrics.ramUsagePercent)%")
+                Text("\(ramPercent)%")
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(ramColor)
@@ -18,26 +20,26 @@ struct RAMChartView: View {
             
             Chart {
                 BarMark(
-                    x: .value("Usage", metrics.ramUsagePercent),
+                    x: .value("Usage", ramUsage),
                     y: .value("Type", "RAM")
                 )
                 .foregroundStyle(ramColor.gradient)
                 .cornerRadius(4)
                 
                 BarMark(
-                    x: .value("Free", 100 - metrics.ramUsagePercent),
+                    x: .value("Free", 1.0 - ramUsage),
                     y: .value("Type", "Free")
                 )
                 .foregroundStyle(Color.gray.opacity(0.3))
                 .cornerRadius(4)
             }
-            .frame(height: 30)
+            .frame(height: 24)
             .chartYAxis(.hidden)
             
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Usado: \(String(format: "%.1f", metrics.ramUsedGB)) GB")
-                    Text("Total: \(String(format: "%.1f", metrics.ramTotalGB)) GB")
+                    Text("Used: \(String(format: "%.1f", ramUsedGB)) GB")
+                    Text("Total: \(String(format: "%.1f", ramTotalGB)) GB")
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -49,15 +51,12 @@ struct RAMChartView: View {
         .cornerRadius(12)
     }
     
+    private var ramPercent: Int { Int(ramUsage * 100) }
+    
     private var ramColor: Color {
-        if metrics.ramUsagePercent > 90 {
-            return .red
-        } else if metrics.ramUsagePercent > 75 {
-            return .orange
-        } else if metrics.ramUsagePercent > 50 {
-            return .yellow
-        } else {
-            return .green
-        }
+        if ramPercent > 90 { return .red }
+        else if ramPercent > 75 { return .orange }
+        else if ramPercent > 50 { return .yellow }
+        else { return .green }
     }
 }
