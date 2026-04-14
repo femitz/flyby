@@ -15,7 +15,7 @@ struct RAMChartView: View {
                 Text("\(ramPercent)%")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(ramColor)
+                    .foregroundStyle(ramColor)
             }
             
             Chart {
@@ -42,13 +42,13 @@ struct RAMChartView: View {
                     Text("Total: \(String(format: "%.1f", ramTotalGB)) GB")
                 }
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 Spacer()
             }
         }
         .padding()
-        .background(Color(nsColor: .controlBackgroundColor))
-        .cornerRadius(12)
+        .background(.background)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     
     private var ramPercent: Int { Int(ramUsage * 100) }

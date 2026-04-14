@@ -3,6 +3,8 @@ import SwiftUI
 struct ThermalStateView: View {
     let thermalState: SystemThermalState
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -22,7 +24,7 @@ struct ThermalStateView: View {
                     }
                     .padding(8)
                     .background(state == thermalState ? state.color.opacity(0.2) : Color.clear)
-                    .cornerRadius(8)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(state == thermalState ? state.color : Color.clear, lineWidth: 2)
@@ -32,11 +34,11 @@ struct ThermalStateView: View {
             
             Text(description)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
         .padding()
-        .background(Color(nsColor: .controlBackgroundColor))
-        .cornerRadius(12)
+        .background(.background)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     
     private var description: String {
@@ -62,10 +64,10 @@ struct ThermalIndicator: View {
             Text(state.rawValue)
                 .fontWeight(.semibold)
         }
-        .foregroundColor(state.color)
+        .foregroundStyle(state.color)
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
         .background(state.color.opacity(0.2))
-        .cornerRadius(8)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

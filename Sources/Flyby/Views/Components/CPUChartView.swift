@@ -7,6 +7,8 @@ struct CPUChartView: View {
     let ramUsedGB: Double
     let ramTotalGB: Double
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -16,7 +18,7 @@ struct CPUChartView: View {
                 Text("\(cpuPercent)%")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(cpuColor)
+                    .foregroundStyle(cpuColor)
             }
             
             Chart {
@@ -39,34 +41,44 @@ struct CPUChartView: View {
                 Text("\(ramPercent)%")
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(ramColor)
+                    .foregroundStyle(ramColor)
             }
             
             HStack {
                 Text("\(String(format: "%.1f", ramUsedGB)) GB used of \(String(format: "%.1f", ramTotalGB)) GB")
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
             .font(.caption)
         }
         .padding()
-        .background(Color(nsColor: .controlBackgroundColor))
-        .cornerRadius(12)
+        .background(.background)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     
     private var cpuPercent: Int { Int(cpuUsage * 100) }
     private var ramPercent: Int { Int(ramUsage * 100) }
     
     private var cpuColor: Color {
-        if cpuPercent > 80 { return .red }
-        else if cpuPercent > 60 { return .orange }
-        else if cpuPercent > 40 { return .yellow }
-        else { return .green }
+        if cpuPercent > 80 {
+            return .red
+        } else if cpuPercent > 60 {
+            return .orange
+        } else if cpuPercent > 40 {
+            return .yellow
+        } else {
+            return .green
+        }
     }
     
     private var ramColor: Color {
-        if ramPercent > 90 { return .red }
-        else if ramPercent > 75 { return .orange }
-        else if ramPercent > 50 { return .yellow }
-        else { return .green }
+        if ramPercent > 90 {
+            return .red
+        } else if ramPercent > 75 {
+            return .orange
+        } else if ramPercent > 50 {
+            return .yellow
+        } else {
+            return .green
+        }
     }
 }

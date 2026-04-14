@@ -34,7 +34,7 @@ struct DashboardView: View {
             VStack(spacing: 12) {
                 HStack {
                     Text("Refresh:")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                     Picker("", selection: $selectedInterval) {
                         ForEach(intervals, id: \.self) { interval in
                             Text("\(Int(interval))s").tag(interval)
