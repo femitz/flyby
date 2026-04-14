@@ -1,4 +1,4 @@
-# SystemMonitor
+# Flyby
 
 Real-time system monitoring app for macOS (Apple Silicon M1+/M2+).
 
@@ -27,29 +27,29 @@ xcode-select --install
 
 ### 2. Build
 ```bash
-cd SystemMonitor
+cd Flyby
 swift build -c release
 ```
 
 ### 3. Install
 ```bash
-cp .build/release/SystemMonitor /Applications/SystemMonitor
-chmod +x /Applications/SystemMonitor
+cp .build/release/Flyby /Applications/Flyby
+chmod +x /Applications/Flyby
 ```
 
 ### 4. Run
 ```bash
-/Applications/SystemMonitor
+/Applications/Flyby
 ```
 
 Or open from Finder:
 - Go to `/Applications`
-- Double-click SystemMonitor
+- Double-click Flyby
 - If prompted about "unidentified developer", right-click > Open > Open
 
 ### 5. Add to Login Items (optional)
 - System Settings > General > Login Items
-- Click + and add SystemMonitor
+- Click + and add Flyby
 
 ## How It Works
 
@@ -81,8 +81,8 @@ Note: Apple does NOT provide a public API for actual temperature readings. Therm
 ## Project Structure
 
 ```
-SystemMonitor/
-├── Sources/SystemMonitor/
+Flyby/
+├── Sources/Flyby/
 │   ├── App/SystemMonitorApp.swift      # Main app + menu bar
 │   ├── Services/SystemMonitorService.swift  # Monitoring logic
 │   ├── Views/

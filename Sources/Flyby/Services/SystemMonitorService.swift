@@ -130,12 +130,17 @@ final class SystemMonitorService: ObservableObject {
         let totalGB = totalMemory / 1_073_741_824
 
         let freePages = Double(vmStats.free_count)
-        let freeMemory = freePages * pageSize
-        let usedMemory = totalMemory - freeMemory
-        let usedGB = usedMemory / 1_073_741_824
-        let freeGB = freeMemory / 1_073_741_824
+        let inactivePages = Double(vmStats.inactive_count)
+        let speculativePages = Double(vmStats.speculative_count)
+        let purgeablePages = Double(vmStats.purgeable_count)
 
-        return RAMInfo(totalGB: totalGB, usedGB: usedGB, freeGB: freeGB)
+        let availablePages = freePages + inactivePages + speculativePages + purgeablePages
+        let availableMemory = availablePages * pageSize
+        let usedMemory = totalMemory - availableMemory
+        let usedGB = usedMemory / 1_073_741_824
+        let availableGB = availableMemory / 1_073_741_824
+
+        return RAMInfo(totalGB: totalGB, usedGB: usedGB, freeGB: availableGB)
     }
 
     private func getThermalState() -> SystemThermalState {

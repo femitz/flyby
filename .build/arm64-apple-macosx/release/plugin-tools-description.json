@@ -17,42 +17,42 @@
 
   ],
   "swiftCommands" : {
-    "C.SystemMonitor-arm64-apple-macosx-release.module" : {
+    "C.Flyby-arm64-apple-macosx-release.module" : {
       "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
-      "fileList" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/sources",
+      "fileList" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/sources",
       "importPath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Modules",
       "inputs" : [
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/App/SystemMonitorApp.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/App/SystemMonitorApp.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Services/SystemMonitorService.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Services/SystemMonitorService.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Utilities/Settings.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Utilities/Settings.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/CPUChartView.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/CPUChartView.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/RAMChartView.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/RAMChartView.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/ThermalStateView.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/ThermalStateView.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/DashboardView.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/DashboardView.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/MenuBarView.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/MenuBarView.swift"
         },
         {
           "kind" : "file",
@@ -60,21 +60,21 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/sources"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/sources"
         }
       ],
       "isLibrary" : false,
-      "moduleName" : "SystemMonitor",
-      "moduleOutputPath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Modules/SystemMonitor.swiftmodule",
+      "moduleName" : "Flyby",
+      "moduleOutputPath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Modules/Flyby.swiftmodule",
       "objects" : [
-        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/SystemMonitorApp.swift.o",
-        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/SystemMonitorService.swift.o",
-        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/Settings.swift.o",
-        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/CPUChartView.swift.o",
-        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/RAMChartView.swift.o",
-        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/ThermalStateView.swift.o",
-        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/DashboardView.swift.o",
-        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/MenuBarView.swift.o"
+        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/SystemMonitorApp.swift.o",
+        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/SystemMonitorService.swift.o",
+        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/Settings.swift.o",
+        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/CPUChartView.swift.o",
+        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/RAMChartView.swift.o",
+        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/ThermalStateView.swift.o",
+        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/DashboardView.swift.o",
+        "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/MenuBarView.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -93,7 +93,7 @@
         "-Xfrontend",
         "-entry-point-function-name",
         "-Xfrontend",
-        "SystemMonitor_main",
+        "Flyby_main",
         "-swift-version",
         "5",
         "-plugin-path",
@@ -122,57 +122,57 @@
         "-package-name",
         "flyby"
       ],
-      "outputFileMapPath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/output-file-map.json",
+      "outputFileMapPath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/output-file-map.json",
       "outputs" : [
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/SystemMonitorApp.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/SystemMonitorApp.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/SystemMonitorService.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/SystemMonitorService.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/Settings.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/Settings.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/CPUChartView.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/CPUChartView.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/RAMChartView.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/RAMChartView.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/ThermalStateView.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/ThermalStateView.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/DashboardView.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/DashboardView.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/MenuBarView.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/MenuBarView.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Modules/SystemMonitor.swiftmodule"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Modules/Flyby.swiftmodule"
         }
       ],
       "prepareForIndexing" : false,
       "sources" : [
-        "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/App/SystemMonitorApp.swift",
-        "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Services/SystemMonitorService.swift",
-        "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Utilities/Settings.swift",
-        "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/CPUChartView.swift",
-        "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/RAMChartView.swift",
-        "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/ThermalStateView.swift",
-        "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/DashboardView.swift",
-        "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/MenuBarView.swift"
+        "/Users/mitz/Documents/Development/flyby/Sources/Flyby/App/SystemMonitorApp.swift",
+        "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Services/SystemMonitorService.swift",
+        "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Utilities/Settings.swift",
+        "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/CPUChartView.swift",
+        "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/RAMChartView.swift",
+        "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/ThermalStateView.swift",
+        "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/DashboardView.swift",
+        "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/MenuBarView.swift"
       ],
-      "tempsPath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build",
+      "tempsPath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build",
       "wholeModuleOptimization" : true
     }
   },
@@ -180,21 +180,21 @@
 
   },
   "swiftTargetScanArgs" : {
-    "SystemMonitor" : [
+    "Flyby" : [
       "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
       "-module-name",
-      "SystemMonitor",
+      "Flyby",
       "-package-name",
       "flyby",
       "-c",
-      "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/App/SystemMonitorApp.swift",
-      "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Services/SystemMonitorService.swift",
-      "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Utilities/Settings.swift",
-      "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/CPUChartView.swift",
-      "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/RAMChartView.swift",
-      "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/ThermalStateView.swift",
-      "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/DashboardView.swift",
-      "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/MenuBarView.swift",
+      "/Users/mitz/Documents/Development/flyby/Sources/Flyby/App/SystemMonitorApp.swift",
+      "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Services/SystemMonitorService.swift",
+      "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Utilities/Settings.swift",
+      "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/CPUChartView.swift",
+      "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/RAMChartView.swift",
+      "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/ThermalStateView.swift",
+      "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/DashboardView.swift",
+      "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/MenuBarView.swift",
       "-I",
       "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Modules",
       "-target",
@@ -213,7 +213,7 @@
       "-Xfrontend",
       "-entry-point-function-name",
       "-Xfrontend",
-      "SystemMonitor_main",
+      "Flyby_main",
       "-swift-version",
       "5",
       "-plugin-path",
@@ -246,7 +246,7 @@
     ]
   },
   "targetDependencyMap" : {
-    "SystemMonitor" : [
+    "Flyby" : [
 
     ]
   },
@@ -262,7 +262,7 @@
     }
   },
   "writeCommands" : {
-    "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/sources" : {
+    "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/sources" : {
       "alwaysOutOfDate" : false,
       "inputs" : [
         {
@@ -271,40 +271,40 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/App/SystemMonitorApp.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/App/SystemMonitorApp.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Services/SystemMonitorService.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Services/SystemMonitorService.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Utilities/Settings.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Utilities/Settings.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/CPUChartView.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/CPUChartView.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/RAMChartView.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/RAMChartView.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/Components/ThermalStateView.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/Components/ThermalStateView.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/DashboardView.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/DashboardView.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/Sources/SystemMonitor/Views/MenuBarView.swift"
+          "name" : "/Users/mitz/Documents/Development/flyby/Sources/Flyby/Views/MenuBarView.swift"
         }
       ],
-      "outputFilePath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/sources"
+      "outputFilePath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/sources"
     },
-    "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.product/Objects.LinkFileList" : {
+    "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.product/Objects.LinkFileList" : {
       "alwaysOutOfDate" : false,
       "inputs" : [
         {
@@ -313,38 +313,38 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/CPUChartView.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/CPUChartView.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/DashboardView.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/DashboardView.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/MenuBarView.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/MenuBarView.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/RAMChartView.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/RAMChartView.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/Settings.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/Settings.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/SystemMonitorApp.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/SystemMonitorApp.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/SystemMonitorService.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/SystemMonitorService.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.build/ThermalStateView.swift.o"
+          "name" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.build/ThermalStateView.swift.o"
         }
       ],
-      "outputFilePath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/SystemMonitor.product/Objects.LinkFileList"
+      "outputFilePath" : "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/Flyby.product/Objects.LinkFileList"
     },
     "/Users/mitz/Documents/Development/flyby/.build/arm64-apple-macosx/release/swift-version--58304C5D6DBC2206.txt" : {
       "alwaysOutOfDate" : true,

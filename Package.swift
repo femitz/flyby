@@ -2,21 +2,21 @@
 import PackageDescription
 
 let package = Package(
-    name: "SystemMonitor",
+    name: "Flyby",
     platforms: [
         .macOS(.v13)
     ],
     products: [
         .executable(
-            name: "SystemMonitor",
-            targets: ["SystemMonitor"]
+            name: "Flyby",
+            targets: ["Flyby"]
         )
     ],
     targets: [
         .executableTarget(
-            name: "SystemMonitor",
+            name: "Flyby",
             dependencies: [],
-            path: "Sources/SystemMonitor"
+            path: "Sources/Flyby"
         )
     ]
 )

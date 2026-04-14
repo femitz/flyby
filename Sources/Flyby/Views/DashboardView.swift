@@ -10,7 +10,7 @@ struct DashboardView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            Text("System Monitor")
+            Text("Flyby")
                 .font(.title)
                 .fontWeight(.bold)
             
