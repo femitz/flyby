@@ -1,0 +1,385 @@
+{
+  "version": 1,
+  "skills": {
+    "accessorysetupkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "74280743a3e69fb4c9242ccd20838f8d8ca29aedba57e9fbf1f63a00a13c6683"
+    },
+    "activitykit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "ceffdabc0e4841a38fbd8884ee50900189662489635584082d0927bbc2d69d6a"
+    },
+    "adattributionkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "5a1762884481a2717483505ee1f784e0930f396e4ae263362bf0de6883186e37"
+    },
+    "alarmkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "9715165d4cd31cd49c6c1d019236ded81e07dfc59f1daeb725dfd42720c499c0"
+    },
+    "app-clips": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "ecb187893b269954765fd45c517f2a98e1b65a211296af8d8b0f1b283afe4b8c"
+    },
+    "app-intents": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "e414271dcda80376e454ca3c257dd17e8bfe0e0007ad035d459a4f752f5c4695"
+    },
+    "app-store-review": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "4fc6e8ad5260ec294958a7efc8f4b4d81eabff431bd411970c68035162fea6e5"
+    },
+    "apple-on-device-ai": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "19c22d4931884eaa40610799f37a63dc10b1563728e42ed2ff47bd0ec29e4f10"
+    },
+    "appmigrationkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "1e7d357131151e9d09c8cc3e686886fde13a631ca511b13805151a9335e7b4e6"
+    },
+    "audioaccessorykit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "ac99ab4293e8d768a2fefbd44f4128010e2f624f04032d463519a762789eabdf"
+    },
+    "authentication": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "59970d4eaffd879f84c3575bccbe5aab07ac51c66e201b7cf3e2db76254a4fe8"
+    },
+    "avkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "21e6abfc6ddce98c506dafd90355c44132eb07fe1a1d11dabd4be21d4b6e770b"
+    },
+    "background-processing": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "ed984200ac0772c83c4a84233058eaaeb164d89c00b006373a8e351989911ea4"
+    },
+    "browserenginekit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "eca6f89a8a3e15af04817d7f65dfee507cb732f95a7cd127fe46e46b46e1b3ab"
+    },
+    "callkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "ae90e6217a9be26490e9d3b6324cf0a344274970c2654411fcf1bbacd756cbf9"
+    },
+    "carplay": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "2c851626bd223b020882da23338c4feb40574fc2646cc7b3904a8dc7a9891727"
+    },
+    "cloudkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "ca3c9f9e51eb3a10406fb9b4eb8c7200b13c7ba3e42514db0b91dc97553f16dd"
+    },
+    "contacts-framework": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "8d0588e808cb171f569de6f5480ddb952c19e4d8f30d774edc921e021693106a"
+    },
+    "core-bluetooth": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "7809b5918aed16072889d230a9c7b31d5a9e9588118ef863992584d28a6ba801"
+    },
+    "core-motion": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "bb7afab5ed010e8f026449a901afb6a86bdcb9274f727df9589b2161ace229e4"
+    },
+    "core-nfc": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "04cb1d8a8c58041c27fa55a9abe721405aa924314984f5832b57f6362654e775"
+    },
+    "coreml": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "55c08bf06f1d633a45c8730c601876684557294539d49bdfb16d38e4b3d4a282"
+    },
+    "cryptokit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "6e8ce7183518f211233ad3b27bf3bd2bbeb062b360af4a323d71ae3fa74784cc"
+    },
+    "cryptotokenkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "b2fbf5d5e3e892a56c8ec8a34a01201e3a63109c2ee68c3c06bf91b72a7d723c"
+    },
+    "debugging-instruments": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "f8a86874e4a891a6326aee77c6a7f53d9fd279aebfd74923714a72ada010bb2d"
+    },
+    "device-integrity": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "0123ae6455065d1edd79d788e5efea54da058d8698786335b3d22bbd29fc4cde"
+    },
+    "dockkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "0f5450ea871f48e879cf00e0fae624647bf63a555ad684dbc958e6049ce92434"
+    },
+    "energykit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "2c08185c15e4a03101f05c63248751312d4bbddfd19eb0cb98cace0630ebbe29"
+    },
+    "eventkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "e84960df57b63057f65ee5f960de8b275c9472d9ed1f2e4e6080656e3c8f1e0c"
+    },
+    "financekit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "2ed24155ac70f2a3342744133ae0eb6355f29d2920da9a47727f9248778e8301"
+    },
+    "gamekit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "243fb6cc583801e209fd7450ca9332ca6d6b4693152f1ec294c6b15ef9a3eff9"
+    },
+    "healthkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "d6688c517d30791f84a4b851271358f7c7c2a8c890c98ae90c261ac1c6f75ea5"
+    },
+    "homekit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "dd271f5e70c715d7bfd525d77a1bae14400ac64c99a64cc0676e492a92a53f1e"
+    },
+    "ios-accessibility": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "1f9d0906bbae5d5dd8f98147d666a5b3cabe568967c4a5ed55c474dc8068380a"
+    },
+    "ios-localization": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "43717b724730f6396262f21c1d96e8c48fbc31c872e7c7f033f59e88a4439019"
+    },
+    "ios-networking": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "b1dbc1e21563d5617824d6a5c18a3b7dbd5252729e9660600adf07b4bda88158"
+    },
+    "ios-security": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "3cb9e14fa4f5b64d4b674e546df21db528ed8adc8c4a4397d3ce49535c22990a"
+    },
+    "mapkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "0b8871b81189cfa877b995777b210c7faf4de6321b7f52511a04bc609741229a"
+    },
+    "metrickit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "e78f028bfea9a99139a48cdc92a1c1f486e4d662db37a93112e535fd4103c59d"
+    },
+    "musickit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "9b98b04e475d79e786da89acac7d652ecb1bf776b6933db308ebc16f07606a90"
+    },
+    "natural-language": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "fe19f4ac8a57c7d15e5923a522b8eb49da99c83780440e33de7f5b2b06ea65cd"
+    },
+    "paperkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "7fb1345cf405591cdd026e4217cc603e0a2bfcfa664b8a8a43e13ed968fd146e"
+    },
+    "passkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "d67d85c6d23f0481458f246c738c38582478951b6364dd3bc725b9cd239cfe14"
+    },
+    "pdfkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "2ad9d15ab2c1689171f6d3e16bf6f56221ef8dc66ed45acc095391fe1dbcb0b5"
+    },
+    "pencilkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "728c9cc6ab5b6045e8cf6ee841c513cafaebc517d7f4704732ebc0eb099450aa"
+    },
+    "permissionkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "f5b8d9d35a720f365af3211fa097dee70b290566d38c49155dda954fa8a7889e"
+    },
+    "photokit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "890ead6a51c7dac4a770afbd47b94e796e4df7117310d577f7674990ef144253"
+    },
+    "push-notifications": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "987ac1744c0dd450ed0d1253e4db592138afe9898f0bd69cb47ec6bf7fb3c152"
+    },
+    "realitykit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "9eb7134aa9a8a76c19081745fda233c59d64dad0af65328c69a036a0dc16f989"
+    },
+    "relevancekit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "3dda22c9711c8fb813f87e27269cacf25f6d1f02f79b38b405ddd5808a85916a"
+    },
+    "scenekit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "203092f9fbc2919ef40ca0f4ae680b385588f6aecca61307102ad66f0a5f4601"
+    },
+    "sensorkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "091c077f28ed486c3721f9bd05ac418bc174b0a3c0fe58008f6cb6b860189b69"
+    },
+    "shareplay-activities": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "2ff3c038e10649ea81fa3effd8416dea321bba980c53e4c5221794a1f948552f"
+    },
+    "speech-recognition": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "f748880343b74930d24f327a107149e963470bcc6575a49f0834a028405f8cda"
+    },
+    "spritekit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "4c4295a6c6792b8d1c33155e7b9afec3fbb4f702775f51eb207c8d49c0b37ee2"
+    },
+    "storekit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "6e605bd887afad504825791d8b2b2f339eae2ac810230e7669e1a28aa68b8a92"
+    },
+    "swift-charts": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "84ea494536b5e4fe550de21fb8d97755a22c82ec820f7a0d06338321f9513d99"
+    },
+    "swift-codable": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "190ab8fd18d0d7e27b3e187431321d80ffa2518eea581f4232cc9c373dbfa0c5"
+    },
+    "swift-concurrency": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "e293abc109db2f9d1f9594f20145da449cd6d531fe99d058e8dc2470a9db5fec"
+    },
+    "swift-language": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "685216fc419e621bf7f0e2e3af80f0274d8be38b95095c48dd8ccdcc8ab63593"
+    },
+    "swift-testing": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "e366351820ea14428eee91da26b07b218b8ad774a1b46a0a6c94f3bcdfec41b9"
+    },
+    "swiftdata": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "7938cb9820a4fc030a3360554b2331a8d0da7025b21f885f46c9ef84cea0e3d2"
+    },
+    "swiftui-animation": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "9fefcdb010a1817213324470f1a6eddec3b83d887a2b8b90dc17f0eb73d78d96"
+    },
+    "swiftui-gestures": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "5ed7e992858262310ae0a529eef120d96da43a23ff97a2242d7cb3cf23356b5b"
+    },
+    "swiftui-layout-components": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "aa3a65d5a452a255b041ffb8f6c3f61881d3f99471216b906c8cfa96d163bcd7"
+    },
+    "swiftui-liquid-glass": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "dc8302ce5052a3a6cda220dd74b68408e38fffe03d4f5f0c4fb556af5ce8da8e"
+    },
+    "swiftui-navigation": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "2b3aef82e114f60a1efed18e8743249c3c3254121c3590f2ae7978a63dc1fbb2"
+    },
+    "swiftui-patterns": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "300e3a062327d5a462f9a27fad51560fb5f8a43c5af1c98688950dbc99606e57"
+    },
+    "swiftui-performance": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "194dd74c54766ea8c7cc12b38ee45cfdff74b00deb713f79c954d02e61be4b6b"
+    },
+    "swiftui-uikit-interop": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "9311f1b01176ed3ea523cb5da5bf99ed94046078faca31e53fbc18733d337c14"
+    },
+    "swiftui-webkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "03422650ddd8d98fa05b36d77ff494c9014a1666733e3b81e18b3c6010693239"
+    },
+    "tabletopkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "db1dc90004167dbf61ea898c4e769cd314f5ba0112c2f57464b705c9466e68d6"
+    },
+    "tipkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "cb86c24b66e1dc34952a517da903fb11fdc3ba209037ae9a9fbdc8334698cfb4"
+    },
+    "vision-framework": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "88bdb12d3d61919de5cb4eaea76a72a97b954bac772b80d28bc567655b5d6ce8"
+    },
+    "weatherkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "51e1a787c9422746ae71c7605a54b97062351d4d3b0e281cce2b4be0e2cd59c6"
+    },
+    "widgetkit": {
+      "source": "dpearson2699/swift-ios-skills",
+      "sourceType": "github",
+      "computedHash": "3f2e574af6c7b46bc51877c34fbd363cc71a71a15416c4476fd8a7cfd7163601"
+    }
+  }
+}
