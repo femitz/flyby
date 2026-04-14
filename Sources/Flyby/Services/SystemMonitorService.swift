@@ -151,13 +151,12 @@ final class SystemMonitorService: ObservableObject {
         let totalMemory = Double(ProcessInfo.processInfo.physicalMemory)
         let totalGB = totalMemory / 1_073_741_824
 
-        // wired + active + compressor - purgeable
+        // wired + active + compressor (matching Activity Monitor)
         let wiredPages = Double(vmStats.wire_count)
         let activePages = Double(vmStats.active_count)
         let compressorPages = Double(vmStats.compressor_page_count)
-        let purgeablePages = Double(vmStats.purgeable_count)
 
-        let usedPages = wiredPages + activePages + compressorPages - purgeablePages
+        let usedPages = wiredPages + activePages + compressorPages
         let usedMemory = usedPages * pageSize
         let usedGB = usedMemory / 1_073_741_824
         let freeGB = (totalMemory - usedMemory) / 1_073_741_824
