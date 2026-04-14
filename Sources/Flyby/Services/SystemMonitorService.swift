@@ -18,7 +18,7 @@ final class SystemMonitorService: ObservableObject {
     private var timer: Timer?
     private var previousCPUInfo: host_cpu_load_info?
     private var isRunning = false
-    private var refreshCount = 0
+    private var isRefreshing = false
 
     private init() {
         loadSettings()
@@ -27,7 +27,16 @@ final class SystemMonitorService: ObservableObject {
     func start() {
         guard !isRunning else { return }
         isRunning = true
-        refresh()
+        
+        // Primeiro refresh síncrono para ter dados iniciais
+        let (cpu, ram, thermal) = gatherMetricsSync()
+        cpuUsage = cpu
+        ramUsage = ram.usagePercent
+        ramUsedGB = ram.usedGB
+        ramTotalGB = ram.totalGB
+        thermalState = thermal
+        
+        // Iniciar timer para atualizaões periódicas
         startTimer()
     }
 
@@ -48,26 +57,37 @@ final class SystemMonitorService: ObservableObject {
 
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true) { [weak self] _ in
-            self?.refresh()
+            self?.refreshAsync()
         }
     }
 
-    private func refresh() {
-        refreshCount += 1
+    private func refreshAsync() {
+        guard !isRefreshing else { return }
+        isRefreshing = true
         
         Task { @MainActor in
-            let cpu = self.getCPUMetrics()
-            let ram = self.getRAMMetrics()
-            let thermal = self.getThermalState()
-            
-            await MainActor.run {
-                self.cpuUsage = cpu
-                self.ramUsage = ram.usagePercent
-                self.ramUsedGB = ram.usedGB
-                self.ramTotalGB = ram.totalGB
-                self.thermalState = thermal
-            }
+            let (cpu, ram, thermal) = await self.gatherMetricsAsync()
+            self.cpuUsage = cpu
+            self.ramUsage = ram.usagePercent
+            self.ramUsedGB = ram.usedGB
+            self.ramTotalGB = ram.totalGB
+            self.thermalState = thermal
+            self.isRefreshing = false
         }
+    }
+
+    private func gatherMetricsSync() -> (Double, RAMInfo, SystemThermalState) {
+        let cpu = getCPUMetrics()
+        let ram = getRAMMetrics()
+        let thermal = getThermalState()
+        return (cpu, ram, thermal)
+    }
+
+    private func gatherMetricsAsync() async -> (Double, RAMInfo, SystemThermalState) {
+        let cpu = getCPUMetrics()
+        let ram = getRAMMetrics()
+        let thermal = getThermalState()
+        return (cpu, ram, thermal)
     }
 
     private func getCPUMetrics() -> Double {
@@ -87,7 +107,8 @@ final class SystemMonitorService: ObservableObject {
         let currentIdle = Double(cpuLoadInfo.cpu_ticks.2)
         let currentNice = Double(cpuLoadInfo.cpu_ticks.3)
 
-        guard let previous = previousCPUInfo, refreshCount > 1 else {
+        // Primeira leitura - inicializar previous
+        guard let previous = previousCPUInfo else {
             previousCPUInfo = cpuLoadInfo
             return 0
         }
@@ -97,6 +118,7 @@ final class SystemMonitorService: ObservableObject {
         let prevIdle = Double(previous.cpu_ticks.2)
         let prevNice = Double(previous.cpu_ticks.3)
 
+        // Calcular deltas
         let deltaUser = max(0, currentUser - prevUser)
         let deltaSystem = max(0, currentSystem - prevSystem)
         let deltaIdle = max(0, currentIdle - prevIdle)
@@ -129,13 +151,12 @@ final class SystemMonitorService: ObservableObject {
         let totalMemory = Double(ProcessInfo.processInfo.physicalMemory)
         let totalGB = totalMemory / 1_073_741_824
 
-        // Atividade: wired + active + compressed - purgeable (similar ao Activity Monitor)
+        // wired + active + compressor - purgeable
         let wiredPages = Double(vmStats.wire_count)
         let activePages = Double(vmStats.active_count)
         let compressorPages = Double(vmStats.compressor_page_count)
         let purgeablePages = Double(vmStats.purgeable_count)
 
-        // usado = wired + active + compressor - purgeable
         let usedPages = wiredPages + activePages + compressorPages - purgeablePages
         let usedMemory = usedPages * pageSize
         let usedGB = usedMemory / 1_073_741_824
