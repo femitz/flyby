@@ -147,21 +147,28 @@ final class SystemMonitorService: ObservableObject {
             return RAMInfo(totalGB: 0, usedGB: 0, freeGB: 0)
         }
 
-        let pageSize: Double = 4096
-        let totalMemory = Double(ProcessInfo.processInfo.physicalMemory)
-        let totalGB = totalMemory / 1_073_741_824
+        let pageSize = Double(systemPageSize())
+        let totalBytes = Double(ProcessInfo.processInfo.physicalMemory)
+        let totalGB = totalBytes / 1_073_741_824
 
-        // wired + active + compressor (matching Activity Monitor)
-        let wiredPages = Double(vmStats.wire_count)
-        let activePages = Double(vmStats.active_count)
-        let compressorPages = Double(vmStats.compressor_page_count)
+        // Approximate the memory footprint shown by Activity Monitor:
+        // treat free, inactive, and speculative pages as available memory.
+        let freePages = Double(vmStats.free_count)
+        let inactivePages = Double(vmStats.inactive_count)
+        let speculativePages = Double(vmStats.speculative_count)
 
-        let usedPages = wiredPages + activePages + compressorPages
-        let usedMemory = usedPages * pageSize
-        let usedGB = usedMemory / 1_073_741_824
-        let freeGB = (totalMemory - usedMemory) / 1_073_741_824
+        let availableBytes = (freePages + inactivePages + speculativePages) * pageSize
+        let usedBytes = max(0, totalBytes - min(availableBytes, totalBytes))
+        let usedGB = usedBytes / 1_073_741_824
+        let freeGB = max(0, totalBytes - usedBytes) / 1_073_741_824
 
         return RAMInfo(totalGB: totalGB, usedGB: usedGB, freeGB: freeGB)
+    }
+
+    private func systemPageSize() -> vm_size_t {
+        var pageSize: vm_size_t = 0
+        let result = host_page_size(mach_host_self(), &pageSize)
+        return result == KERN_SUCCESS && pageSize > 0 ? pageSize : vm_kernel_page_size
     }
 
     private func getThermalState() -> SystemThermalState {
