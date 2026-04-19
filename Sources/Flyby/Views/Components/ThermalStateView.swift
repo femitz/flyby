@@ -2,43 +2,43 @@ import SwiftUI
 
 struct ThermalStateView: View {
     let thermalState: SystemThermalState
-    
-    @Environment(\.colorScheme) private var colorScheme
-    
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Label("Thermal State", systemImage: "thermometer")
-                    .font(.headline)
-                Spacer()
-                ThermalIndicator(state: thermalState)
-            }
-            
-            HStack(spacing: 12) {
-                ForEach(SystemThermalState.allCases, id: \.self) { state in
-                    VStack(spacing: 4) {
-                        Text(state.icon)
-                            .font(.title2)
-                        Text(state.rawValue)
-                            .font(.caption2)
-                    }
-                    .padding(8)
-                    .background(state == thermalState ? state.color.opacity(0.2) : Color.clear)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(state == thermalState ? state.color : Color.clear, lineWidth: 2)
-                    )
+        PanelCard {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Label("Thermal State", systemImage: "thermometer.medium")
+                        .font(.headline)
+                    Spacer()
+                    ThermalIndicator(state: thermalState)
                 }
+
+                HStack(spacing: 10) {
+                    ForEach(SystemThermalState.allCases, id: \.self) { state in
+                        VStack(spacing: 6) {
+                            Text(state.icon)
+                                .font(.title3)
+                            Text(state.rawValue)
+                                .font(.caption2.weight(.medium))
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(state == thermalState ? state.color.opacity(0.15) : Color.white.opacity(0.55))
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .stroke(state == thermalState ? state.color.opacity(0.55) : Color.black.opacity(0.05), lineWidth: 1)
+                        )
+                    }
+                }
+
+                Text(description)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            
-            Text(description)
-                .font(.caption)
-                .foregroundStyle(.secondary)
         }
-        .padding()
-        .background(.background)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     
     private var description: String {
@@ -62,12 +62,12 @@ struct ThermalIndicator: View {
         HStack(spacing: 4) {
             Text(state.icon)
             Text(state.rawValue)
-                .fontWeight(.semibold)
+                .font(.caption.weight(.semibold))
         }
         .foregroundStyle(state.color)
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
-        .background(state.color.opacity(0.2))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .background(state.color.opacity(0.14))
+        .clipShape(Capsule())
     }
 }

@@ -1,5 +1,4 @@
 import SwiftUI
-import Charts
 
 struct CPUChartView: View {
     let cpuUsage: Double
@@ -7,56 +6,70 @@ struct CPUChartView: View {
     let ramUsedGB: Double
     let ramTotalGB: Double
     
-    @Environment(\.colorScheme) private var colorScheme
-    
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Label("CPU", systemImage: "cpu")
-                    .font(.headline)
-                Spacer()
-                Text("\(cpuPercent)%")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundStyle(cpuColor)
-            }
-            
-            Chart {
-                BarMark(
-                    x: .value("Usage", cpuUsage),
-                    y: .value("Type", "CPU")
+        PanelCard {
+            VStack(alignment: .leading, spacing: 18) {
+                metricSection(
+                    title: "CPU",
+                    systemImage: "cpu",
+                    value: "\(cpuPercent)%",
+                    subtitle: "Current processor usage",
+                    color: cpuColor,
+                    fraction: cpuUsage
                 )
-                .foregroundStyle(cpuColor.gradient)
-                .cornerRadius(4)
+
+                Divider()
+
+                metricSection(
+                    title: "Memory",
+                    systemImage: "memorychip",
+                    value: "\(ramPercent)%",
+                    subtitle: "\(String(format: "%.1f", ramUsedGB)) GB of \(String(format: "%.1f", ramTotalGB)) GB in use",
+                    color: ramColor,
+                    fraction: ramUsage
+                )
             }
-            .frame(height: 24)
-            .chartYAxis(.hidden)
-            
-            Divider()
-            
-            HStack {
-                Label("Memory", systemImage: "memorychip")
-                    .font(.headline)
-                Spacer()
-                Text("\(ramPercent)%")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundStyle(ramColor)
-            }
-            
-            HStack {
-                Text("\(String(format: "%.1f", ramUsedGB)) GB used of \(String(format: "%.1f", ramTotalGB)) GB")
-                    .foregroundStyle(.secondary)
-            }
-            .font(.caption)
         }
-        .padding()
-        .background(.background)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     
     private var cpuPercent: Int { Int(cpuUsage * 100) }
     private var ramPercent: Int { Int(ramUsage * 100) }
+
+    @ViewBuilder
+    private func metricSection(
+        title: String,
+        systemImage: String,
+        value: String,
+        subtitle: String,
+        color: Color,
+        fraction: Double
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline) {
+                Label(title, systemImage: systemImage)
+                    .font(.headline)
+
+                Spacer()
+
+                Text(value)
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                    .foregroundStyle(color)
+            }
+
+            Capsule()
+                .fill(Color.black.opacity(0.08))
+                .frame(height: 9)
+                .overlay(alignment: .leading) {
+                    Capsule()
+                        .fill(color.gradient)
+                        .frame(width: max(12, 340 * fraction), height: 9)
+                }
+
+            Text(subtitle)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+    }
     
     private var cpuColor: Color {
         if cpuPercent > 80 {

@@ -18,6 +18,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
     private let service = SystemMonitorService.shared
+    private let lightAppearance = NSAppearance(named: .aqua)
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusBar()
@@ -45,10 +46,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func setupPopover() {
+        let dashboard = DashboardView(service: service)
+            .preferredColorScheme(.light)
+
+        let hostingController = NSHostingController(rootView: dashboard)
+        hostingController.view.appearance = lightAppearance
+
         popover = NSPopover()
         popover?.contentSize = NSSize(width: 400, height: 550)
         popover?.behavior = .transient
-        popover?.contentViewController = NSHostingController(rootView: DashboardView(service: service))
+        popover?.appearance = lightAppearance
+        popover?.contentViewController = hostingController
     }
     
     @objc private func togglePopover() {
@@ -58,8 +66,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             popover?.performClose(nil)
         } else {
             popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            configurePopoverWindowAppearance()
             NSApp.activate(ignoringOtherApps: true)
         }
+    }
+
+    private func configurePopoverWindowAppearance() {
+        guard let window = popover?.contentViewController?.view.window else { return }
+        window.appearance = lightAppearance
+        window.backgroundColor = .windowBackgroundColor
+        window.isOpaque = false
+        window.hasShadow = true
     }
     
     private func updateButtonTitle() {

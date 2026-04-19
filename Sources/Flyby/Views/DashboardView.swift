@@ -1,5 +1,4 @@
 import SwiftUI
-import Charts
 
 struct DashboardView: View {
     @ObservedObject var service: SystemMonitorService
@@ -9,15 +8,11 @@ struct DashboardView: View {
     let intervals = [1.0, 2.0, 5.0, 10.0, 30.0]
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Flyby")
-                .font(.title)
-                .fontWeight(.bold)
-            
-            Divider()
-            
+        VStack(spacing: 0) {
+            header
+
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 16) {
                     CPUChartView(
                         cpuUsage: service.cpuUsage,
                         ramUsage: service.ramUsage,
@@ -25,40 +20,111 @@ struct DashboardView: View {
                         ramTotalGB: service.ramTotalGB
                     )
                     ThermalStateView(thermalState: service.thermalState)
+                    settingsCard
                 }
-                .padding()
+                .padding(18)
             }
-            
-            Divider()
-            
-            VStack(spacing: 12) {
-                HStack {
-                    Text("Refresh:")
+            .scrollIndicators(.visible)
+        }
+        .frame(width: 420, height: 540)
+        .background(Color(nsColor: .windowBackgroundColor))
+        .onAppear {
+            selectedInterval = service.refreshInterval
+            launchAtLogin = AppSettings.shared.launchAtLogin
+        }
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Flyby")
+                        .font(.system(size: 28, weight: .semibold, design: .rounded))
+                    Text("System overview")
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
-                    Picker("", selection: $selectedInterval) {
+                }
+
+                Spacer()
+
+                Text(service.thermalState.rawValue)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(service.thermalState.color)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(service.thermalState.color.opacity(0.14))
+                    .clipShape(Capsule())
+            }
+
+            HStack(spacing: 16) {
+                statBadge(title: "CPU", value: "\(Int(service.cpuUsage * 100))%")
+                statBadge(title: "Memory", value: "\(Int(service.ramUsage * 100))%")
+                statBadge(title: "RAM Used", value: String(format: "%.1f GB", service.ramUsedGB))
+            }
+        }
+        .padding(.horizontal, 18)
+        .padding(.top, 18)
+        .padding(.bottom, 14)
+        .background(
+            Rectangle()
+                .fill(Color(nsColor: .windowBackgroundColor))
+                .overlay(alignment: .bottom) {
+                    Divider()
+                }
+        )
+    }
+
+    private var settingsCard: some View {
+        PanelCard {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Preferences")
+                    .font(.headline)
+
+                HStack {
+                    Text("Refresh interval")
+                        .foregroundStyle(.primary)
+
+                    Spacer()
+
+                    Picker("Refresh interval", selection: $selectedInterval) {
                         ForEach(intervals, id: \.self) { interval in
-                            Text("\(Int(interval))s").tag(interval)
+                            Text("\(Int(interval)) seconds").tag(interval)
                         }
                     }
                     .pickerStyle(.menu)
-                    .frame(width: 80)
+                    .labelsHidden()
+                    .frame(width: 140)
                     .onChange(of: selectedInterval) { newValue in
                         service.updateInterval(newValue)
                     }
                 }
-                .padding(.horizontal)
-                
-                Toggle("Launch at Login", isOn: $launchAtLogin)
-                    .padding(.horizontal)
-                    .onChange(of: launchAtLogin) { newValue in
-                        setLaunchAtLogin(enabled: newValue)
+
+                Divider()
+
+                Toggle(isOn: $launchAtLogin) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Launch at Login")
+                        Text("Start Flyby automatically when your Mac signs in.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
+                }
+                .toggleStyle(.switch)
+                .onChange(of: launchAtLogin) { newValue in
+                    setLaunchAtLogin(enabled: newValue)
+                }
             }
-            .padding()
         }
-        .frame(width: 400, height: 500)
-        .onAppear {
-            selectedInterval = service.refreshInterval
+    }
+
+    private func statBadge(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .foregroundStyle(.primary)
         }
     }
     
