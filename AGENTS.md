@@ -21,8 +21,7 @@ Keep new code in the existing folder split: app wiring in `App`, metric logic in
 Example install flow:
 
 ```bash
-swift build -c release
-cp .build/release/Flyby /Applications/Flyby
+./scripts/install-app.sh
 ```
 
 ## Coding Style & Naming Conventions
