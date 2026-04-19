@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct DashboardView: View {
@@ -113,6 +114,18 @@ struct DashboardView: View {
                 .onChange(of: launchAtLogin) { newValue in
                     setLaunchAtLogin(enabled: newValue)
                 }
+
+                Divider()
+
+                HStack {
+                    Spacer()
+
+                    Button("Quit Flyby") {
+                        quitApp()
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.regular)
+                }
             }
         }
     }
@@ -130,5 +143,9 @@ struct DashboardView: View {
     
     private func setLaunchAtLogin(enabled: Bool) {
         AppSettings.shared.launchAtLogin = enabled
+    }
+
+    private func quitApp() {
+        NSApp.terminate(nil)
     }
 }
