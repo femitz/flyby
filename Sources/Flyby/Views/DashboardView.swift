@@ -10,31 +10,49 @@ struct DashboardView: View {
     let intervals = [1.0, 2.0, 5.0, 10.0, 30.0]
     
     var body: some View {
-        VStack(spacing: 0) {
-            header
-
-            ScrollView {
-                VStack(spacing: 16) {
-                    CPUChartView(
-                        cpuUsage: service.cpuUsage,
-                        ramUsage: service.ramUsage,
-                        ramUsedGB: service.ramUsedGB,
-                        ramTotalGB: service.ramTotalGB
-                    )
-                    ThermalStateView(thermalState: service.thermalState)
-                    settingsCard
-                }
-                .padding(18)
+        ZStack {
+            dashboardBackground
+            VStack(spacing: 0) {
+                header
+                    .zIndex(1)
+                scrollContent
             }
-            .scrollIndicators(.visible)
         }
         .frame(width: 420, height: 540)
-        .background(Color(nsColor: .windowBackgroundColor))
         .preferredColorScheme(settings.theme.colorScheme)
         .onAppear {
             selectedInterval = service.refreshInterval
             launchAtLogin = AppSettings.shared.launchAtLogin
         }
+    }
+
+    @ViewBuilder
+    private var scrollContent: some View {
+        if #available(macOS 26, *) {
+            GlassEffectContainer(spacing: 18) {
+                cardStack
+            }
+        } else {
+            cardStack
+        }
+    }
+
+    private var cardStack: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                CPUChartView(
+                    cpuUsage: service.cpuUsage,
+                    ramUsage: service.ramUsage,
+                    ramUsedGB: service.ramUsedGB,
+                    ramTotalGB: service.ramTotalGB
+                )
+                ThermalStateView(thermalState: service.thermalState)
+                settingsCard
+            }
+            .padding(18)
+        }
+        .scrollIndicators(.visible)
+        .clipped()
     }
 
     private var header: some View {
@@ -50,13 +68,7 @@ struct DashboardView: View {
 
                 Spacer()
 
-                Text(service.thermalState.rawValue)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(service.thermalState.color)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(service.thermalState.color.opacity(0.14))
-                    .clipShape(Capsule())
+                thermalBadge
             }
 
             HStack(spacing: 16) {
@@ -69,11 +81,7 @@ struct DashboardView: View {
         .padding(.top, 18)
         .padding(.bottom, 14)
         .background(
-            Rectangle()
-                .fill(Color(nsColor: .windowBackgroundColor))
-                .overlay(alignment: .bottom) {
-                    Divider()
-                }
+            headerBackground
         )
     }
 
@@ -139,12 +147,30 @@ struct DashboardView: View {
                 HStack {
                     Spacer()
 
-                    Button("Quit Flyby") {
-                        quitApp()
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.regular)
+                    quitButton
                 }
+            }
+        }
+    }
+
+    private var thermalBadge: some View {
+        let label = Text(service.thermalState.rawValue)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(service.thermalState.color)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+
+        return Group {
+            if #available(macOS 26, *) {
+                label
+                    .glassEffect(
+                        .regular.tint(service.thermalState.color.opacity(0.2)),
+                        in: .capsule
+                    )
+            } else {
+                label
+                    .background(service.thermalState.color.opacity(0.14))
+                    .clipShape(Capsule())
             }
         }
     }
@@ -165,6 +191,65 @@ struct DashboardView: View {
             get: { settings.theme },
             set: { settings.setTheme($0) }
         )
+    }
+
+    private var quitButton: some View {
+        Group {
+            if #available(macOS 26, *) {
+                Button("Quit Flyby") {
+                    quitApp()
+                }
+                .buttonStyle(.glassProminent)
+            } else {
+                Button("Quit Flyby") {
+                    quitApp()
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+        .controlSize(.regular)
+    }
+
+    private var dashboardBackground: some View {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color(nsColor: .windowBackgroundColor),
+                    Color(nsColor: .underPageBackgroundColor)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            Circle()
+                .fill(Color.blue.opacity(0.18))
+                .frame(width: 220, height: 220)
+                .offset(x: 110, y: -150)
+
+            Circle()
+                .fill(service.thermalState.color.opacity(0.16))
+                .frame(width: 180, height: 180)
+                .offset(x: -130, y: 170)
+        }
+        .ignoresSafeArea()
+    }
+
+    @ViewBuilder
+    private var headerBackground: some View {
+        Rectangle()
+            .fill(
+                LinearGradient(
+                    colors: [
+                        Color(nsColor: .windowBackgroundColor),
+                        Color(nsColor: .windowBackgroundColor).opacity(0.98)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .overlay(alignment: .bottom) {
+                Divider()
+            }
     }
     
     private func setLaunchAtLogin(enabled: Bool) {
