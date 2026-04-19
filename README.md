@@ -25,31 +25,30 @@ Real-time system monitoring app for macOS (Apple Silicon M1+/M2+).
 xcode-select --install
 ```
 
-### 2. Build
+### 2. Package the app bundle
 ```bash
-cd Flyby
-swift build -c release
+./scripts/package-app.sh
 ```
 
-### 3. Install
+This creates `dist/Flyby.app`.
+
+### 3. Install to Applications
 ```bash
-cp .build/release/Flyby /Applications/Flyby
-chmod +x /Applications/Flyby
+./scripts/install-app.sh
 ```
 
-### 4. Run
-```bash
-/Applications/Flyby
-```
+By default the installer copies `Flyby.app` to `/Applications`. If that folder is not writable, it falls back to `~/Applications`.
 
-Or open from Finder:
-- Go to `/Applications`
-- Double-click Flyby
-- If prompted about "unidentified developer", right-click > Open > Open
+### 4. Run without Terminal
+- Open `Flyby` from Finder
+- Search for `Flyby` in Spotlight
+- Search for `Flyby` in Raycast
+
+If macOS warns that the app is from an unidentified developer, right-click `Flyby.app` in Finder and choose `Open` once.
 
 ### 5. Add to Login Items (optional)
-- System Settings > General > Login Items
-- Click + and add Flyby
+- Open Flyby once from `/Applications/Flyby.app`
+- Enable `Launch at Login` inside the app
 
 ## How It Works
 
@@ -101,6 +100,11 @@ Flyby/
 1. Right-click the app in Finder
 2. Select "Open"
 3. Click "Open" in the dialog
+
+### Flyby does not appear in Spotlight or Raycast yet
+- Confirm the app is installed as `Flyby.app` in `/Applications` or `~/Applications`
+- Wait a few seconds for macOS indexing to catch up
+- Run `mdimport /Applications/Flyby.app` if you want to force a metadata refresh
 
 ### CPU/RAM showing 0%
 The app needs a second refresh cycle to calculate CPU usage. Wait 10 seconds for accurate readings.
