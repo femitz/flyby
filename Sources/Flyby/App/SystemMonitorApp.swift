@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import Combine
 import ServiceManagement
 import Charts
 
@@ -17,12 +18,15 @@ struct FlybyApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
+    private var hostingController: NSHostingController<DashboardView>?
+    private var cancellables = Set<AnyCancellable>()
     private let service = SystemMonitorService.shared
-    private let lightAppearance = NSAppearance(named: .aqua)
+    private let settings = AppSettings.shared
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusBar()
         setupPopover()
+        observeThemeChanges()
         service.start()
     }
     
@@ -47,16 +51,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func setupPopover() {
         let dashboard = DashboardView(service: service)
-            .preferredColorScheme(.light)
 
         let hostingController = NSHostingController(rootView: dashboard)
-        hostingController.view.appearance = lightAppearance
+        self.hostingController = hostingController
 
         popover = NSPopover()
         popover?.contentSize = NSSize(width: 400, height: 550)
         popover?.behavior = .transient
-        popover?.appearance = lightAppearance
         popover?.contentViewController = hostingController
+        applyTheme()
     }
     
     @objc private func togglePopover() {
@@ -73,10 +76,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func configurePopoverWindowAppearance() {
         guard let window = popover?.contentViewController?.view.window else { return }
-        window.appearance = lightAppearance
+        window.appearance = settings.theme.nsAppearance
         window.backgroundColor = .windowBackgroundColor
         window.isOpaque = false
         window.hasShadow = true
+    }
+
+    private func observeThemeChanges() {
+        settings.$theme
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.applyTheme()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func applyTheme() {
+        let appearance = settings.theme.nsAppearance
+        hostingController?.view.appearance = appearance
+        popover?.appearance = appearance
+        popover?.contentViewController?.view.window?.appearance = appearance
     }
     
     private func updateButtonTitle() {

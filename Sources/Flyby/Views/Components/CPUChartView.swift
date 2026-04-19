@@ -57,7 +57,7 @@ struct CPUChartView: View {
             }
 
             Capsule()
-                .fill(Color.black.opacity(0.08))
+                .fill(Color(nsColor: .separatorColor).opacity(0.35))
                 .frame(height: 9)
                 .overlay(alignment: .leading) {
                     Capsule()

@@ -3,6 +3,7 @@ import SwiftUI
 
 struct DashboardView: View {
     @ObservedObject var service: SystemMonitorService
+    @ObservedObject private var settings = AppSettings.shared
     @State private var selectedInterval: Double = 5.0
     @State private var launchAtLogin: Bool = false
     
@@ -29,6 +30,7 @@ struct DashboardView: View {
         }
         .frame(width: 420, height: 540)
         .background(Color(nsColor: .windowBackgroundColor))
+        .preferredColorScheme(settings.theme.colorScheme)
         .onAppear {
             selectedInterval = service.refreshInterval
             launchAtLogin = AppSettings.shared.launchAtLogin
@@ -102,6 +104,23 @@ struct DashboardView: View {
 
                 Divider()
 
+                HStack {
+                    Text("Appearance")
+                        .foregroundStyle(.primary)
+
+                    Spacer()
+
+                    Picker("Appearance", selection: appearanceBinding) {
+                        ForEach(AppTheme.allCases) { theme in
+                            Text(theme.displayName).tag(theme)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 160)
+                }
+
+                Divider()
+
                 Toggle(isOn: $launchAtLogin) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Launch at Login")
@@ -139,6 +158,13 @@ struct DashboardView: View {
                 .font(.system(.headline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.primary)
         }
+    }
+
+    private var appearanceBinding: Binding<AppTheme> {
+        Binding(
+            get: { settings.theme },
+            set: { settings.setTheme($0) }
+        )
     }
     
     private func setLaunchAtLogin(enabled: Bool) {

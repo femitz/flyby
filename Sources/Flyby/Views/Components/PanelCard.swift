@@ -16,7 +16,7 @@ struct PanelCard<Content: View>: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(Color.black.opacity(0.06), lineWidth: 1)
+                    .stroke(Color(nsColor: .separatorColor).opacity(0.35), lineWidth: 1)
             )
     }
 }

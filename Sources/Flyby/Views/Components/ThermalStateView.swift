@@ -24,11 +24,20 @@ struct ThermalStateView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .background(state == thermalState ? state.color.opacity(0.15) : Color.white.opacity(0.55))
+                        .background(
+                            state == thermalState
+                                ? state.color.opacity(0.15)
+                                : Color(nsColor: .quaternaryLabelColor).opacity(0.12)
+                        )
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .stroke(state == thermalState ? state.color.opacity(0.55) : Color.black.opacity(0.05), lineWidth: 1)
+                                .stroke(
+                                    state == thermalState
+                                        ? state.color.opacity(0.55)
+                                        : Color(nsColor: .separatorColor).opacity(0.35),
+                                    lineWidth: 1
+                                )
                         )
                     }
                 }
