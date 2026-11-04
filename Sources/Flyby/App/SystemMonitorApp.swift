@@ -1,8 +1,6 @@
 import SwiftUI
 import AppKit
 import Combine
-import ServiceManagement
-import Charts
 
 @main
 struct FlybyApp: App {
@@ -18,8 +16,7 @@ struct FlybyApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
-    private var popover: NSPopover?
-    private var hostingController: NSHostingController<DashboardView>?
+    private var panelController: PanelController?
     private var cancellables = Set<AnyCancellable>()
     private let service = SystemMonitorService.shared
     private let settings = AppSettings.shared
@@ -27,10 +24,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         if exportIconsIfRequested() { return }
 
+        NSApp.appearance = NSAppearance(named: .darkAqua)
         setupStatusBar()
-        setupPopover()
-        observeThemeChanges()
-        observeMonitorToggles()
+        panelController = PanelController(service: service)
+        observeSettings()
         applyAppIcon()
         service.start()
         _ = AppVolumeService.shared   // starts itself when "App volume" is enabled
@@ -46,7 +43,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         
         if let button = statusItem?.button {
             button.target = self
-            button.action = #selector(togglePopover)
+            button.action = #selector(togglePanel)
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
             updateButtonTitle()
         }
@@ -56,49 +53,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    private func setupPopover() {
-        let dashboard = DashboardView(service: service)
-
-        let hostingController = NSHostingController(rootView: dashboard)
-        self.hostingController = hostingController
-
-        popover = NSPopover()
-        popover?.contentSize = NSSize(width: 400, height: 550)
-        popover?.behavior = .transient
-        popover?.contentViewController = hostingController
-        applyTheme()
-    }
-    
-    @objc private func togglePopover() {
+    @objc private func togglePanel() {
         guard let button = statusItem?.button else { return }
-        
-        if popover?.isShown == true {
-            popover?.performClose(nil)
-        } else {
-            popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            configurePopoverWindowAppearance()
-            NSApp.activate(ignoringOtherApps: true)
-        }
+        panelController?.toggle(relativeTo: button)
     }
 
-    private func configurePopoverWindowAppearance() {
-        guard let window = popover?.contentViewController?.view.window else { return }
-        window.appearance = settings.theme.nsAppearance
-        window.backgroundColor = .windowBackgroundColor
-        window.isOpaque = false
-        window.hasShadow = true
-    }
-
-    private func observeThemeChanges() {
-        settings.$theme
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.applyTheme()
-            }
-            .store(in: &cancellables)
-    }
-
-    private func observeMonitorToggles() {
+    private func observeSettings() {
         settings.objectWillChange
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
@@ -135,23 +95,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.terminate(nil)
         return true
     }
-
-    private func applyTheme() {
-        let appearance = settings.theme.nsAppearance
-        hostingController?.view.appearance = appearance
-        popover?.appearance = appearance
-        popover?.contentViewController?.view.window?.appearance = appearance
-    }
     
     private func updateButtonTitle() {
         var parts: [String] = []
-        if settings.monitorCPU { parts.append("CPU: \(Int(service.cpuUsage * 100))%") }
-        if settings.monitorRAM { parts.append("RAM: \(Int(service.ramUsage * 100))%") }
-        if settings.monitorThermal { parts.append(service.thermalState.icon) }
-        let title = parts.isEmpty ? (settings.showMenuBarIcon ? "" : "Flyby") : parts.joined(separator: " | ")
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.statusItem?.button?.title = title
+        let labeled = [settings.monitorCPU, settings.monitorRAM].filter { $0 }.count > 1
+        if settings.monitorCPU {
+            parts.append("\(labeled ? "CPU " : "")\(Int(service.cpuUsage * 100))%")
         }
+        if settings.monitorRAM {
+            parts.append("\(labeled ? "RAM " : "")\(Int(service.ramUsage * 100))%")
+        }
+        if settings.monitorThermal && service.thermalState != .nominal {
+            parts.append(service.thermalState.icon)   // only shown when the Mac is running warm
+        }
+
+        let title = parts.isEmpty ? (settings.showMenuBarIcon ? "" : "Flyby") : " " + parts.joined(separator: " · ")
+        statusItem?.button?.attributedTitle = NSAttributedString(
+            string: title,
+            attributes: [.font: NSFont.monospacedSystemFont(ofSize: 12, weight: .medium)]
+        )
     }
 }
