@@ -61,6 +61,11 @@ final class AppSettings: ObservableObject {
         didSet { defaults.set(monitorThermal, forKey: Self.monitorThermalKey) }
     }
 
+    @Published var monitorAppVolume: Bool {
+        didSet { defaults.set(monitorAppVolume, forKey: Self.monitorAppVolumeKey) }
+    }
+
+    private static let monitorAppVolumeKey = "monitorAppVolume"
     private static let monitorCPUKey = "monitorCPU"
     private static let monitorRAMKey = "monitorRAM"
     private static let monitorThermalKey = "monitorThermal"
@@ -73,6 +78,7 @@ final class AppSettings: ObservableObject {
         monitorCPU = Self.storedBool(Self.monitorCPUKey, in: defaults)
         monitorRAM = Self.storedBool(Self.monitorRAMKey, in: defaults)
         monitorThermal = Self.storedBool(Self.monitorThermalKey, in: defaults)
+        monitorAppVolume = Self.storedBool(Self.monitorAppVolumeKey, in: defaults)
 
         if let storedTheme = defaults.string(forKey: themeKey),
            let resolvedTheme = AppTheme(rawValue: storedTheme) {

@@ -29,10 +29,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         observeThemeChanges()
         observeMonitorToggles()
         service.start()
+        _ = AppVolumeService.shared   // starts itself when "App volume" is enabled
     }
     
     func applicationWillTerminate(_ notification: Notification) {
         service.stop()
+        AppVolumeService.shared.stop()
     }
     
     private func setupStatusBar() {

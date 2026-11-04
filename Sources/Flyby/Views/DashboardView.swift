@@ -53,6 +53,9 @@ struct DashboardView: View {
                 if settings.monitorThermal {
                     ThermalStateView(thermalState: service.thermalState)
                 }
+                if settings.monitorAppVolume {
+                    AppVolumeView(service: AppVolumeService.shared)
+                }
                 settingsCard
             }
             .padding(18)
@@ -129,6 +132,7 @@ struct DashboardView: View {
                     monitorToggle("CPU", systemImage: "cpu", isOn: $settings.monitorCPU)
                     monitorToggle("Memory", systemImage: "memorychip", isOn: $settings.monitorRAM)
                     monitorToggle("Thermal state", systemImage: "thermometer.medium", isOn: $settings.monitorThermal)
+                    monitorToggle("App volume", systemImage: "speaker.wave.2", isOn: $settings.monitorAppVolume)
                 }
 
                 Divider()
