@@ -50,8 +50,30 @@ final class AppSettings: ObservableObject {
     private let themeKey = "appTheme"
 
     @Published var theme: AppTheme
+
+    @Published var monitorCPU: Bool {
+        didSet { defaults.set(monitorCPU, forKey: Self.monitorCPUKey) }
+    }
+    @Published var monitorRAM: Bool {
+        didSet { defaults.set(monitorRAM, forKey: Self.monitorRAMKey) }
+    }
+    @Published var monitorThermal: Bool {
+        didSet { defaults.set(monitorThermal, forKey: Self.monitorThermalKey) }
+    }
+
+    private static let monitorCPUKey = "monitorCPU"
+    private static let monitorRAMKey = "monitorRAM"
+    private static let monitorThermalKey = "monitorThermal"
+
+    private static func storedBool(_ key: String, in defaults: UserDefaults) -> Bool {
+        defaults.object(forKey: key) == nil ? true : defaults.bool(forKey: key)
+    }
     
     private init() {
+        monitorCPU = Self.storedBool(Self.monitorCPUKey, in: defaults)
+        monitorRAM = Self.storedBool(Self.monitorRAMKey, in: defaults)
+        monitorThermal = Self.storedBool(Self.monitorThermalKey, in: defaults)
+
         if let storedTheme = defaults.string(forKey: themeKey),
            let resolvedTheme = AppTheme(rawValue: storedTheme) {
             theme = resolvedTheme

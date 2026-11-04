@@ -40,13 +40,19 @@ struct DashboardView: View {
     private var cardStack: some View {
         ScrollView {
             VStack(spacing: 16) {
-                CPUChartView(
-                    cpuUsage: service.cpuUsage,
-                    ramUsage: service.ramUsage,
-                    ramUsedGB: service.ramUsedGB,
-                    ramTotalGB: service.ramTotalGB
-                )
-                ThermalStateView(thermalState: service.thermalState)
+                if settings.monitorCPU || settings.monitorRAM {
+                    CPUChartView(
+                        cpuUsage: service.cpuUsage,
+                        ramUsage: service.ramUsage,
+                        ramUsedGB: service.ramUsedGB,
+                        ramTotalGB: service.ramTotalGB,
+                        showCPU: settings.monitorCPU,
+                        showRAM: settings.monitorRAM
+                    )
+                }
+                if settings.monitorThermal {
+                    ThermalStateView(thermalState: service.thermalState)
+                }
                 settingsCard
             }
             .padding(18)
@@ -68,13 +74,19 @@ struct DashboardView: View {
 
                 Spacer()
 
-                thermalBadge
+                if settings.monitorThermal {
+                    thermalBadge
+                }
             }
 
             HStack(spacing: 16) {
-                statBadge(title: "CPU", value: "\(Int(service.cpuUsage * 100))%")
-                statBadge(title: "Memory", value: "\(Int(service.ramUsage * 100))%")
-                statBadge(title: "RAM Used", value: String(format: "%.1f GB", service.ramUsedGB))
+                if settings.monitorCPU {
+                    statBadge(title: "CPU", value: "\(Int(service.cpuUsage * 100))%")
+                }
+                if settings.monitorRAM {
+                    statBadge(title: "Memory", value: "\(Int(service.ramUsage * 100))%")
+                    statBadge(title: "RAM Used", value: String(format: "%.1f GB", service.ramUsedGB))
+                }
             }
         }
         .padding(.horizontal, 18)
@@ -108,6 +120,15 @@ struct DashboardView: View {
                     .onChange(of: selectedInterval) { newValue in
                         service.updateInterval(newValue)
                     }
+                }
+
+                Divider()
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Monitors")
+                    monitorToggle("CPU", systemImage: "cpu", isOn: $settings.monitorCPU)
+                    monitorToggle("Memory", systemImage: "memorychip", isOn: $settings.monitorRAM)
+                    monitorToggle("Thermal state", systemImage: "thermometer.medium", isOn: $settings.monitorThermal)
                 }
 
                 Divider()
@@ -150,6 +171,16 @@ struct DashboardView: View {
                     quitButton
                 }
             }
+        }
+    }
+
+    private func monitorToggle(_ title: String, systemImage: String, isOn: Binding<Bool>) -> some View {
+        Toggle(isOn: isOn) {
+            Label(title, systemImage: systemImage)
+        }
+        .toggleStyle(.switch)
+        .onChange(of: isOn.wrappedValue) { _ in
+            service.refreshNow()
         }
     }
 

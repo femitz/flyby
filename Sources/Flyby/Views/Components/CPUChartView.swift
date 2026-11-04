@@ -5,10 +5,13 @@ struct CPUChartView: View {
     let ramUsage: Double
     let ramUsedGB: Double
     let ramTotalGB: Double
+    var showCPU: Bool = true
+    var showRAM: Bool = true
     
     var body: some View {
         PanelCard {
             VStack(alignment: .leading, spacing: 18) {
+                if showCPU {
                 metricSection(
                     title: "CPU",
                     systemImage: "cpu",
@@ -17,9 +20,13 @@ struct CPUChartView: View {
                     color: cpuColor,
                     fraction: cpuUsage
                 )
+                }
 
-                Divider()
+                if showCPU && showRAM {
+                    Divider()
+                }
 
+                if showRAM {
                 metricSection(
                     title: "Memory",
                     systemImage: "memorychip",
@@ -28,6 +35,7 @@ struct CPUChartView: View {
                     color: ramColor,
                     fraction: ramUsage
                 )
+                }
             }
         }
     }
