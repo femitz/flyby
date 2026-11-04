@@ -27,6 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupStatusBar()
         setupPopover()
         observeThemeChanges()
+        observeMonitorToggles()
         service.start()
     }
     
@@ -91,6 +92,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .store(in: &cancellables)
     }
 
+    private func observeMonitorToggles() {
+        settings.objectWillChange
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateButtonTitle()
+            }
+            .store(in: &cancellables)
+    }
+
     private func applyTheme() {
         let appearance = settings.theme.nsAppearance
         hostingController?.view.appearance = appearance
@@ -99,12 +109,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func updateButtonTitle() {
-        let cpu = Int(service.cpuUsage * 100)
-        let ram = Int(service.ramUsage * 100)
-        let thermal = service.thermalState.icon
+        var parts: [String] = []
+        if settings.monitorCPU { parts.append("CPU: \(Int(service.cpuUsage * 100))%") }
+        if settings.monitorRAM { parts.append("RAM: \(Int(service.ramUsage * 100))%") }
+        if settings.monitorThermal { parts.append(service.thermalState.icon) }
+        let title = parts.isEmpty ? "Flyby" : parts.joined(separator: " | ")
         
         DispatchQueue.main.async { [weak self] in
-            self?.statusItem?.button?.title = "CPU: \(cpu)% | RAM: \(ram)% | \(thermal)"
+            self?.statusItem?.button?.title = title
         }
     }
 }

@@ -29,12 +29,7 @@ final class SystemMonitorService: ObservableObject {
         isRunning = true
         
         // Primeiro refresh síncrono para ter dados iniciais
-        let (cpu, ram, thermal) = gatherMetricsSync()
-        cpuUsage = cpu
-        ramUsage = ram.usagePercent
-        ramUsedGB = ram.usedGB
-        ramTotalGB = ram.totalGB
-        thermalState = thermal
+        refreshNow()
         
         // Iniciar timer para atualizaões periódicas
         startTimer()
@@ -67,27 +62,43 @@ final class SystemMonitorService: ObservableObject {
         
         Task { @MainActor in
             let (cpu, ram, thermal) = await self.gatherMetricsAsync()
-            self.cpuUsage = cpu
-            self.ramUsage = ram.usagePercent
-            self.ramUsedGB = ram.usedGB
-            self.ramTotalGB = ram.totalGB
-            self.thermalState = thermal
+            self.apply(cpu: cpu, ram: ram, thermal: thermal)
             self.isRefreshing = false
         }
     }
 
+    /// Atualiza imediatamente (usado ao ligar/desligar um monitor).
+    func refreshNow() {
+        let (cpu, ram, thermal) = gatherMetricsSync()
+        apply(cpu: cpu, ram: ram, thermal: thermal)
+    }
+
+    private func apply(cpu: Double, ram: RAMInfo, thermal: SystemThermalState) {
+        cpuUsage = cpu
+        ramUsage = ram.usagePercent
+        ramUsedGB = ram.usedGB
+        ramTotalGB = ram.totalGB
+        thermalState = thermal
+    }
+
     private func gatherMetricsSync() -> (Double, RAMInfo, SystemThermalState) {
-        let cpu = getCPUMetrics()
-        let ram = getRAMMetrics()
-        let thermal = getThermalState()
+        let settings = AppSettings.shared
+
+        let cpu: Double
+        if settings.monitorCPU {
+            cpu = getCPUMetrics()
+        } else {
+            previousCPUInfo = nil // evita delta antigo ao religar
+            cpu = 0
+        }
+
+        let ram = settings.monitorRAM ? getRAMMetrics() : RAMInfo(totalGB: 0, usedGB: 0, freeGB: 0)
+        let thermal = settings.monitorThermal ? getThermalState() : .nominal
         return (cpu, ram, thermal)
     }
 
     private func gatherMetricsAsync() async -> (Double, RAMInfo, SystemThermalState) {
-        let cpu = getCPUMetrics()
-        let ram = getRAMMetrics()
-        let thermal = getThermalState()
-        return (cpu, ram, thermal)
+        gatherMetricsSync()
     }
 
     private func getCPUMetrics() -> Double {
