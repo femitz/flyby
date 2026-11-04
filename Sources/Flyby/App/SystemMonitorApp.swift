@@ -15,6 +15,7 @@ struct FlybyApp: App {
     }
 }
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
@@ -24,10 +25,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let settings = AppSettings.shared
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        if exportIconsIfRequested() { return }
+
         setupStatusBar()
         setupPopover()
         observeThemeChanges()
         observeMonitorToggles()
+        applyAppIcon()
         service.start()
         _ = AppVolumeService.shared   // starts itself when "App volume" is enabled
     }
@@ -38,7 +42,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func setupStatusBar() {
-        statusItem = NSStatusBar.system.statusItem(withLength: 180)
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         if let button = statusItem?.button {
             button.target = self
@@ -48,7 +52,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
-            self?.updateButtonTitle()
+            MainActor.assumeIsolated { self?.updateButtonTitle() }
         }
     }
     
@@ -99,8 +103,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.updateButtonTitle()
+                self?.applyAppIcon()
             }
             .store(in: &cancellables)
+    }
+
+    /// Applies the chosen icon variation: the app's runtime icon and the menu bar glyph.
+    private func applyAppIcon() {
+        if let icon = AppIconRenderer.applicationIcon(settings.appIcon) {
+            NSApp.applicationIconImage = icon
+        }
+
+        guard let button = statusItem?.button else { return }
+        if settings.showMenuBarIcon, let glyph = AppIconRenderer.menuBarImage() {
+            button.image = glyph
+            button.imagePosition = .imageLeft
+        } else {
+            button.image = nil
+        }
+    }
+
+    /// `Flyby --export-icons <dir>` writes the Vácuo `.iconset` and quits; see scripts/generate-icns.sh.
+    private func exportIconsIfRequested() -> Bool {
+        let args = CommandLine.arguments
+        guard let flag = args.firstIndex(of: "--export-icons"), args.indices.contains(flag + 1) else { return false }
+        do {
+            try AppIconRenderer.exportIconset(style: .vacuo, to: URL(fileURLWithPath: args[flag + 1]))
+        } catch {
+            FileHandle.standardError.write(Data("Icon export failed: \(error)\n".utf8))
+        }
+        NSApp.terminate(nil)
+        return true
     }
 
     private func applyTheme() {
@@ -115,7 +148,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if settings.monitorCPU { parts.append("CPU: \(Int(service.cpuUsage * 100))%") }
         if settings.monitorRAM { parts.append("RAM: \(Int(service.ramUsage * 100))%") }
         if settings.monitorThermal { parts.append(service.thermalState.icon) }
-        let title = parts.isEmpty ? "Flyby" : parts.joined(separator: " | ")
+        let title = parts.isEmpty ? (settings.showMenuBarIcon ? "" : "Flyby") : parts.joined(separator: " | ")
         
         DispatchQueue.main.async { [weak self] in
             self?.statusItem?.button?.title = title

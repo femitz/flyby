@@ -67,6 +67,10 @@ struct DashboardView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
+                AppIconArtwork(style: settings.appIcon, weight: .medium)
+                    .frame(width: 44, height: 44)
+                    .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
+
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Flyby")
                         .font(.system(size: 28, weight: .semibold, design: .rounded))
@@ -137,6 +141,13 @@ struct DashboardView: View {
 
                 Divider()
 
+                iconPicker
+
+                Toggle("Show icon in menu bar", isOn: $settings.showMenuBarIcon)
+                    .toggleStyle(.switch)
+
+                Divider()
+
                 HStack {
                     Text("Appearance")
                         .foregroundStyle(.primary)
@@ -173,6 +184,38 @@ struct DashboardView: View {
                     Spacer()
 
                     quitButton
+                }
+            }
+        }
+    }
+
+    private var iconPicker: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("App icon")
+
+            HStack(spacing: 12) {
+                ForEach(AppIconStyle.allCases) { style in
+                    let selected = settings.appIcon == style
+                    Button {
+                        settings.appIcon = style
+                    } label: {
+                        VStack(spacing: 6) {
+                            AppIconArtwork(style: style, weight: .medium)
+                                .frame(width: 64, height: 64)
+                                .padding(4)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                        .strokeBorder(selected ? Color.accentColor : Color.clear, lineWidth: 2)
+                                )
+                            Text(style.displayName)
+                                .font(.caption.weight(selected ? .semibold : .regular))
+                                .foregroundStyle(selected ? .primary : .secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("\(style.displayName) icon")
+                    .accessibilityAddTraits(selected ? .isSelected : [])
                 }
             }
         }
