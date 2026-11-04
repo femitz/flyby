@@ -8,6 +8,8 @@
 	<string>Flyby</string>
 	<key>CFBundleExecutable</key>
 	<string>Flyby</string>
+	<key>CFBundleIconFile</key>
+	<string>Flyby</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.flyby.menubar</string>
 	<key>CFBundleInfoDictionaryVersion</key>

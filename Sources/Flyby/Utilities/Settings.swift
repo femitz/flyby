@@ -65,6 +65,15 @@ final class AppSettings: ObservableObject {
         didSet { defaults.set(monitorAppVolume, forKey: Self.monitorAppVolumeKey) }
     }
 
+    @Published var appIcon: AppIconStyle {
+        didSet { defaults.set(appIcon.rawValue, forKey: Self.appIconKey) }
+    }
+    @Published var showMenuBarIcon: Bool {
+        didSet { defaults.set(showMenuBarIcon, forKey: Self.showMenuBarIconKey) }
+    }
+
+    private static let appIconKey = "appIcon"
+    private static let showMenuBarIconKey = "showMenuBarIcon"
     private static let monitorAppVolumeKey = "monitorAppVolume"
     private static let monitorCPUKey = "monitorCPU"
     private static let monitorRAMKey = "monitorRAM"
@@ -79,6 +88,8 @@ final class AppSettings: ObservableObject {
         monitorRAM = Self.storedBool(Self.monitorRAMKey, in: defaults)
         monitorThermal = Self.storedBool(Self.monitorThermalKey, in: defaults)
         monitorAppVolume = Self.storedBool(Self.monitorAppVolumeKey, in: defaults)
+        showMenuBarIcon = Self.storedBool(Self.showMenuBarIconKey, in: defaults)
+        appIcon = defaults.string(forKey: Self.appIconKey).flatMap(AppIconStyle.init(rawValue:)) ?? .vacuo
 
         if let storedTheme = defaults.string(forKey: themeKey),
            let resolvedTheme = AppTheme(rawValue: storedTheme) {
