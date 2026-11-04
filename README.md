@@ -22,14 +22,14 @@ Real-time system monitoring app for macOS (Apple Silicon M1+/M2+).
 
 If you just want to use Flyby, you do not need to build it:
 
-1. Download `Flyby-macos-arm64.zip` from the [Releases page](https://github.com/femitz/flyby/releases) (or from the artifacts of the latest successful run in the [Actions tab](https://github.com/femitz/flyby/actions)).
-2. Unzip it and move `Flyby.app` to `/Applications`.
-3. The app is not signed or notarized, so on first launch right-click `Flyby.app` and choose `Open` once. Alternatively, remove the quarantine flag:
+1. Download `Flyby-macos-arm64.dmg` from the [Releases page](https://github.com/femitz/flyby/releases).
+2. Open the DMG and drag `Flyby` onto the `Applications` shortcut.
+3. The app is ad-hoc signed but not notarized by Apple, so on first launch right-click `Flyby.app` in Applications and choose `Open` once. Alternatively, remove the quarantine flag:
    ```bash
    xattr -dr com.apple.quarantine /Applications/Flyby.app
    ```
 
-A `Flyby-macos-arm64.zip.sha256` file is published alongside the zip to verify the download (`shasum -a 256 -c Flyby-macos-arm64.zip.sha256`).
+A `Flyby-macos-arm64.zip` with the bare app and a `SHA256SUMS` file to verify the downloads (`shasum -a 256 -c SHA256SUMS`) are published alongside the DMG.
 
 ## Installation
 

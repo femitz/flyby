@@ -25,23 +25,35 @@ jobs:
           swift --version
           uname -m
 
-      # users must right-click > Open once or remove the quarantine attribute.
+      # On release tags, stamp the app version (v1.2.3 -> 1.2.3) into Info.plist.
+      - name: Set app version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${GITHUB_REF_NAME#v}" Resources/App/Info.plist
+
+      # The app is ad-hoc signed (not Developer ID / notarized): on first launch users
+      # must right-click > Open once or remove the quarantine attribute.
       - name: Package app
         run: ./scripts/package-app.sh
 
-      - name: Zip app and compute checksum
+      - name: Create DMG installer
+        run: ./scripts/make-dmg.sh
+
+      - name: Zip app and compute checksums
         run: |
+          mv dist/Flyby-macos-arm64.dmg .
           ditto -c -k --keepParent dist/Flyby.app Flyby-macos-arm64.zip
-          shasum -a 256 Flyby-macos-arm64.zip > Flyby-macos-arm64.zip.sha256
-          cat Flyby-macos-arm64.zip.sha256
+          shasum -a 256 Flyby-macos-arm64.dmg Flyby-macos-arm64.zip > SHA256SUMS
+          cat SHA256SUMS
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: Flyby-macos-arm64
           path: |
+            Flyby-macos-arm64.dmg
             Flyby-macos-arm64.zip
-            Flyby-macos-arm64.zip.sha256
+            SHA256SUMS
           if-no-files-found: error
 
   release:
@@ -61,7 +73,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
-            Flyby-macos-arm64.zip Flyby-macos-arm64.zip.sha256 \
+            Flyby-macos-arm64.dmg Flyby-macos-arm64.zip SHA256SUMS \
             --repo "$GITHUB_REPOSITORY" \
             --title "$GITHUB_REF_NAME" \
             --generate-notes
