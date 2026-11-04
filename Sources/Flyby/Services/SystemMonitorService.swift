@@ -237,6 +237,26 @@ enum SystemThermalState: String, CaseIterable {
         }
     }
 
+    /// Short label that fits inside a telemetry ring.
+    var shortName: String {
+        switch self {
+        case .nominal: return "OK"
+        case .fair: return "Morno"
+        case .serious: return "Quente"
+        case .critical: return "Crítico"
+        }
+    }
+
+    /// Ring fill for the thermal gauge (there is no public temperature API).
+    var fraction: Double {
+        switch self {
+        case .nominal: return 0.25
+        case .fair: return 0.5
+        case .serious: return 0.75
+        case .critical: return 1.0
+        }
+    }
+
     var color: Color {
         switch self {
         case .nominal: return .green

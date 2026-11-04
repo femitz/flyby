@@ -22,10 +22,11 @@ struct AudioApp: Identifiable {
 final class AppVolumeService: ObservableObject {
     static let shared = AppVolumeService()
 
-    static let maxVolume = 1.5
+    static let maxVolume = 1.0
 
     @Published private(set) var apps: [AudioApp] = []
     @Published private(set) var volumes: [String: Double] = [:]
+    @Published private(set) var muted: Set<String> = []
     @Published private(set) var errorMessage: String?
 
     var isSupported: Bool {
@@ -63,6 +64,7 @@ final class AppVolumeService: ObservableObject {
         timer = nil
         removeAllTaps()
         volumes.removeAll()
+        muted.removeAll()
         apps = []
         errorMessage = nil
         stopListeningForOutputDeviceChanges()
@@ -74,23 +76,40 @@ final class AppVolumeService: ObservableObject {
         volumes[appID] ?? 1.0
     }
 
-    func setVolume(_ value: Double, for appID: String) {
-        guard #available(macOS 14.2, *) else { return }
-        let clamped = min(max(value, 0), Self.maxVolume)
-        volumes[appID] = clamped
+    func isMuted(_ appID: String) -> Bool {
+        muted.contains(appID)
+    }
 
-        if abs(clamped - 1.0) < 0.01 {
+    func setVolume(_ value: Double, for appID: String) {
+        guard isSupported else { return }
+        let clamped = min(max(value, 0), Self.maxVolume)
+        volumes[appID] = abs(clamped - 1.0) < 0.01 ? nil : clamped
+        applyGain(for: appID)
+    }
+
+    func setMuted(_ isMuted: Bool, for appID: String) {
+        guard isSupported else { return }
+        if isMuted { muted.insert(appID) } else { muted.remove(appID) }
+        applyGain(for: appID)
+    }
+
+    /// Effective gain: 0 when muted, otherwise the chosen volume (1.0 = untouched).
+    private func effectiveGain(for appID: String) -> Float {
+        muted.contains(appID) ? 0 : Float(volume(for: appID))
+    }
+
+    private func applyGain(for appID: String) {
+        guard #available(macOS 14.2, *) else { return }
+        let gain = effectiveGain(for: appID)
+
+        if abs(gain - 1.0) < 0.01 {
             // Back to 100%: remove the tap so the app plays normally again.
             (taps[appID] as? AppTap)?.stop()
             taps[appID] = nil
-            volumes[appID] = nil
-            return
-        }
-
-        if let tap = taps[appID] as? AppTap {
-            tap.gain = Float(clamped)
+        } else if let tap = taps[appID] as? AppTap {
+            tap.gain = gain
         } else if let app = apps.first(where: { $0.id == appID }) {
-            createTap(for: app, gain: Float(clamped))
+            createTap(for: app, gain: gain)
         }
     }
 
@@ -103,8 +122,9 @@ final class AppVolumeService: ObservableObject {
             errorMessage = nil
         } catch {
             volumes[app.id] = nil
-            errorMessage = "Could not control \(app.name): \(error.localizedDescription) "
-                + "Allow Flyby under System Settings → Privacy & Security → Screen & System Audio Recording."
+            muted.remove(app.id)
+            errorMessage = "Não foi possível controlar \(app.name): \(error.localizedDescription) "
+                + "Permita o Flyby em Ajustes → Privacidade e Segurança → Gravação de Tela e Áudio do Sistema."
         }
     }
 
@@ -118,9 +138,9 @@ final class AppVolumeService: ObservableObject {
     /// Rebuilds every active tap, e.g. after the default output device changed.
     private func rebuildTaps() {
         guard #available(macOS 14.2, *) else { return }
-        let active = taps.keys.compactMap { id in apps.first { $0.id == id }.map { ($0, volume(for: id)) } }
+        let active = taps.keys.compactMap { id in apps.first { $0.id == id }.map { ($0, effectiveGain(for: id)) } }
         removeAllTaps()
-        for (app, gain) in active { createTap(for: app, gain: Float(gain)) }
+        for (app, gain) in active { createTap(for: app, gain: gain) }
     }
 
     // MARK: - Discovery
@@ -131,7 +151,7 @@ final class AppVolumeService: ObservableObject {
 
         // Keep adjusted apps visible (and their sliders reachable) even if they went quiet.
         let discoveredIDs = Set(discovered.map(\.id))
-        merged += apps.filter { volumes[$0.id] != nil && !discoveredIDs.contains($0.id) }
+        merged += apps.filter { (volumes[$0.id] != nil || muted.contains($0.id)) && !discoveredIDs.contains($0.id) }
         apps = merged.sorted { ($0.isPlaying ? 0 : 1, $0.name.lowercased()) < ($1.isPlaying ? 0 : 1, $1.name.lowercased()) }
 
         // New helper processes (e.g. a new browser tab) must be added to the tap.
@@ -139,7 +159,7 @@ final class AppVolumeService: ObservableObject {
             for app in apps {
                 guard let tap = taps[app.id] as? AppTap,
                       Set(tap.processObjectIDs) != Set(app.processObjectIDs) else { continue }
-                let gain = Float(volume(for: app.id))
+                let gain = effectiveGain(for: app.id)
                 tap.stop()
                 taps[app.id] = nil
                 createTap(for: app, gain: gain)
