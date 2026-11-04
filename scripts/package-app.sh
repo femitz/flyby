@@ -36,4 +36,11 @@ fi
 
 chmod +x "${MACOS_DIR}/${APP_NAME}"
 
+# Ad-hoc sign the whole bundle. Apple Silicon refuses to run unsigned bundles
+# ("is damaged and can't be opened"); this is not a Developer ID signature, so
+# Gatekeeper still asks for a one-time confirmation on downloaded copies.
+echo "Signing ${APP_NAME}.app (ad-hoc)..."
+codesign --force --deep --sign - "${APP_BUNDLE}"
+codesign --verify --deep --strict "${APP_BUNDLE}"
+
 echo "Created ${APP_BUNDLE}"
