@@ -36,6 +36,13 @@ jobs:
       - name: Package app
         run: ./scripts/package-app.sh
 
+      # dmgbuild writes the Finder window layout directly (no Finder scripting), so it works headless.
+      - name: Install dmgbuild
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --quiet dmgbuild
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+
       - name: Create DMG installer
         run: ./scripts/make-dmg.sh
 

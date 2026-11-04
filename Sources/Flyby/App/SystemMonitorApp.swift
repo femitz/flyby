@@ -22,7 +22,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let settings = AppSettings.shared
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        if exportIconsIfRequested() { return }
+        if exportIconsIfRequested() || exportInstallerBackgroundIfRequested() { return }
 
         NSApp.appearance = NSAppearance(named: .darkAqua)
         setupStatusBar()
@@ -96,6 +96,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
     
+    /// `Flyby --export-dmg-background <dir> <version> <min macOS>` writes the installer
+    /// background images and quits; used by scripts/make-dmg.sh.
+    private func exportInstallerBackgroundIfRequested() -> Bool {
+        let args = CommandLine.arguments
+        guard let flag = args.firstIndex(of: "--export-dmg-background"), args.indices.contains(flag + 3) else { return false }
+        do {
+            try InstallerBackground.export(
+                to: URL(fileURLWithPath: args[flag + 1]),
+                version: args[flag + 2],
+                minimumOS: args[flag + 3]
+            )
+        } catch {
+            FileHandle.standardError.write(Data("Installer background export failed: \(error)\n".utf8))
+            exit(1)
+        }
+        NSApp.terminate(nil)
+        return true
+    }
+
     private func updateButtonTitle() {
         var parts: [String] = []
         let labeled = [settings.monitorCPU, settings.monitorRAM].filter { $0 }.count > 1
