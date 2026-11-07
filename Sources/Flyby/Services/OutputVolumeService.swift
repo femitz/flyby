@@ -6,7 +6,8 @@ import Foundation
 final class OutputVolumeService: ObservableObject {
     static let shared = OutputVolumeService()
 
-    @Published private(set) var deviceName = ""
+    /// nil until a device is read, or when it has no name; the panel then shows a generic one.
+    @Published private(set) var deviceName: String?
     @Published private(set) var volume: Double = 0
     @Published private(set) var isMuted = false
     @Published private(set) var isAvailable = false
@@ -35,7 +36,7 @@ final class OutputVolumeService: ObservableObject {
             isAvailable = false
             return
         }
-        deviceName = Self.name(of: device) ?? "Saída de áudio"
+        deviceName = Self.name(of: device)
 
         guard let current = Self.readVolume(device) else {
             isAvailable = false

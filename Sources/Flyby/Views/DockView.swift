@@ -136,6 +136,9 @@ private struct ProfileDots: View {
     let count: Int
     let active: Int
 
+    /// Not read, but observing it redraws the view (its texts) when the language changes.
+    @ObservedObject private var settings = AppSettings.shared
+
     var body: some View {
         VStack(spacing: 5) {
             ForEach(0..<count, id: \.self) { index in
@@ -145,7 +148,7 @@ private struct ProfileDots: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Perfil \(active + 1) de \(count)")
+        .accessibilityLabel(L10n.profilePosition(active + 1, of: count))
     }
 }
 
@@ -155,6 +158,9 @@ private struct DockIcon: View {
     let section: DockDrag.Section
     /// The slot of the icon being dragged: kept for the layout, drawn by the floating copy.
     let isDragged: Bool
+
+    /// Not read, but observing it redraws the view (its texts) when the language changes.
+    @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
         Button { service.open(entry) } label: {
@@ -182,7 +188,7 @@ private struct DockIcon: View {
         })
         .dockLabel(entry.name)
         .accessibilityLabel(entry.name)
-        .accessibilityValue(entry.isRunning ? "Aberto" : "")
+        .accessibilityValue(entry.isRunning ? L10n.running : "")
     }
 }
 
@@ -191,14 +197,14 @@ extension DockIcon {
     fileprivate var menu: some View {
         let profile = service.activeProfile
         if service.isInActiveProfile(entry) {
-            Button("Remover de \(profile.name)") { service.removeApp(entry.id, from: profile.id) }
+            Button(L10n.removeFrom(profile.name)) { service.removeApp(entry.id, from: profile.id) }
         } else if !service.isFixed(entry) {
-            Button("Manter em \(profile.name)") { service.addApps([entry.url], to: profile.id) }
+            Button(L10n.keepIn(profile.name)) { service.addApps([entry.url], to: profile.id) }
         }
-        Button("Mostrar no Finder") { service.revealInFinder(entry) }
+        Button(L10n.showInFinder) { service.revealInFinder(entry) }
         if entry.isRunning && !service.isFixed(entry) {
             Divider()
-            Button("Sair") { service.quit(entry) }
+            Button(L10n.quit) { service.quit(entry) }
         }
     }
 }
@@ -208,6 +214,8 @@ extension DockIcon {
 private struct TrashIcon: View {
     let service: DockService
     @State private var targeted = false
+    /// Not read, but observing it redraws the view (its texts) when the language changes.
+    @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
         Button { service.openTrash() } label: {
@@ -232,8 +240,8 @@ private struct TrashIcon: View {
             }
             return true
         }
-        .dockLabel("Lixeira")
-        .accessibilityLabel("Lixeira")
+        .dockLabel(L10n.trash)
+        .accessibilityLabel(L10n.trash)
     }
 }
 

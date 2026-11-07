@@ -36,6 +36,12 @@ final class AppSettings: ObservableObject {
         didSet { defaults.set(dockAutoHide, forKey: Self.dockAutoHideKey) }
     }
 
+    /// The interface language. Follows the system until the user picks one in Preferences.
+    @Published var language: Language {
+        didSet { defaults.set(language.rawValue, forKey: Self.languageKey) }
+    }
+
+    private static let languageKey = "language"
     private static let appIconKey = "appIcon"
     /// Off by default: an open app pinned to another profile shows only in that profile.
     @Published var dockShowRunningFromOtherProfiles: Bool {
@@ -76,6 +82,7 @@ final class AppSettings: ObservableObject {
         dockShowRunningFromOtherProfiles = defaults.bool(forKey: Self.dockShowRunningFromOtherProfilesKey)
         reverseMouseScroll = defaults.bool(forKey: Self.reverseMouseScrollKey)
         reverseTrackpadScroll = defaults.bool(forKey: Self.reverseTrackpadScrollKey)
+        language = defaults.string(forKey: Self.languageKey).flatMap(Language.init(rawValue:)) ?? .system
         appIcon = defaults.string(forKey: Self.appIconKey).flatMap(AppIconStyle.init(rawValue:)) ?? .vacuo
     }
     

@@ -87,6 +87,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .store(in: &cancellables)
 
+        // Also emits on subscribe, so a Mac whose language changed since last launch is covered.
+        settings.$language
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { _ in DockService.shared.localizeDefaultNames() }
+            .store(in: &cancellables)
+
         // $customDockEnabled emits the current value on subscribe, which also covers launch.
         settings.$customDockEnabled
             .removeDuplicates()

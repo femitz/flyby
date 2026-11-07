@@ -6,7 +6,7 @@
 
 A macOS menu bar app for Apple Silicon that shows what your Mac is doing and gives you a few small controls the system lacks: a per-app volume mixer, a profile-based Dock and independent scroll direction for mouse and trackpad.
 
-The interface is in Brazilian Portuguese.
+The interface is available in English and Brazilian Portuguese. It follows the system language (Portuguese if macOS prefers it, English otherwise) and can be changed any time in `Preferences > Language`; the change applies immediately. Item names below are the English ones; in Portuguese they are Preferências, Perfis, Atualizações do app and so on.
 
 ## Features
 
@@ -36,7 +36,7 @@ An optional replacement for the macOS Dock, with the same glass look and profile
 - Finder is fixed and shows in every profile
 - It is off by default. While it is on, the native Dock is hidden. Turning it off or quitting Flyby restores your original Dock settings, and if Flyby crashes it restores them on the next launch
 
-Enable it in `Preferências > Dock` and edit profiles in `Preferências > Dock > Perfis`.
+Enable it in `Preferences > Dock` and edit profiles in `Preferences > Dock > Profiles`.
 
 ### Scroll direction
 macOS has a single "natural scrolling" switch for every device. Flyby lets you reverse the mouse and the trackpad **independently**, so you can have the wheel work like on Windows while the trackpad stays natural.
@@ -47,7 +47,7 @@ macOS has a single "natural scrolling" switch for every device. Flyby lets you r
 ### App
 - **Launch at login**
 - **Menu bar icon** that can be hidden, and a choice of app icons
-- **Self-updating**: checks GitHub Releases at launch and every 5 hours. Installing is always a click in `Preferências > Atualizações do app`; the download is verified with `SHA256SUMS` and `codesign` before it replaces the app
+- **Self-updating**: checks GitHub Releases at launch and every 5 hours. Installing is always a click in `Preferences > App updates`; the download is verified with `SHA256SUMS` and `codesign` before it replaces the app
 
 ## Requirements
 
@@ -127,9 +127,9 @@ CPU 12% · RAM 47%
 With a single monitor the label is dropped (`12%`). Click it to open the panel.
 
 ### Panel
-- **Telemetria**: rings for CPU, memory and thermal state
+- **Telemetry**: rings for CPU, memory and thermal state
 - **Mixer**: master volume and the apps that are playing audio
-- **Preferências**: opens inside the panel and has the sections `Monitores`, `Dock`, `Rolagem`, `Atualização`, `Ícone do app`, `Sistema` and `Atualizações do app`
+- **Preferences**: opens inside the panel and has the sections `Monitors`, `Dock`, `Scrolling`, `Refresh rate`, `App icon`, `Language`, `System` and `App updates`
 
 ### Thermal state
 | State | Description |
@@ -169,6 +169,7 @@ Flyby/
 │   │   └── DragGhost.swift
 │   └── Utilities/
 │       ├── Settings.swift                 # UserDefaults-backed settings
+│       ├── Localization.swift             # Language and L10n: every UI string, pt-BR and English
 │       ├── AppIcon.swift                  # App icons drawn in code
 │       └── InstallerBackground.swift      # DMG background drawn in code
 ├── Resources/App/                         # Info.plist and Flyby.icns

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Flyby is a macOS menu bar app (Swift Package, no Xcode project, Apple Silicon, macOS 13+) showing CPU, RAM, thermal state and a per-app volume mixer. UI copy is in Brazilian Portuguese; code and docs are in English.
+Flyby is a macOS menu bar app (Swift Package, no Xcode project, Apple Silicon, macOS 13+) showing CPU, RAM, thermal state and a per-app volume mixer. The UI is available in Brazilian Portuguese and English (switchable in Preferences); code and docs are in English.
 
 ## Commands
 
@@ -23,6 +23,7 @@ Flyby is a macOS menu bar app (Swift Package, no Xcode project, Apple Silicon, m
   - `OutputVolumeService`: master volume/mute of the default output, polled only while the panel is visible.
   - `UpdateService`: checks GitHub Releases (`femitz/flyby`) at launch and every 5 h (10-minute timer compared against a stored timestamp), installs only on user click: downloads `Flyby-macos-arm64.zip`, verifies `SHA256SUMS` and `codesign`, then a detached bash helper waits for the app to exit, swaps the bundle (restoring the old one on failure) and relaunches. Release asset names are part of this contract.
 - **Settings** (`Utilities/Settings.swift`): `AppSettings.shared` wraps `UserDefaults`; booleans default to `true` when unset.
+- **Localization** (`Utilities/Localization.swift`): `Language` (pt-BR / en, stored in `AppSettings.language`, defaulting to the system language) and `L10n`, where every user-visible string lives with both translations side by side. Never hardcode UI text in a view or service. A view that shows `L10n` text must observe `AppSettings.shared` (child views are skipped on redraw otherwise), and text that outlives a view (errors, updater states) is stored as data (`UpdateService.Failure`, `AppVolumeError`) and worded in `L10n` at draw time. Plain Swift tables, not `.strings`/String Catalogs, because the `.app` is assembled by hand and the switch is in-app, not per system locale.
 - **Design** (`Design/Brand.swift`): palette, fonts and shared components (`BrandLabel`, `BrandDivider`, `BrandButtonStyle`, `TelemetryRing`, `BrandSlider`). Use these instead of ad-hoc colors. App icons and the DMG background are drawn in code (`Utilities/AppIcon.swift`, `InstallerBackground.swift`), not stored as images.
 
 ## Brand rules

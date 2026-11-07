@@ -239,12 +239,7 @@ enum SystemThermalState: String, CaseIterable {
 
     /// Short label that fits inside a telemetry ring.
     var shortName: String {
-        switch self {
-        case .nominal: return "OK"
-        case .fair: return "Morno"
-        case .serious: return "Quente"
-        case .critical: return "Crítico"
-        }
+        L10n.thermalName(self)
     }
 
     /// Ring fill for the thermal gauge (there is no public temperature API).

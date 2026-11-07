@@ -121,12 +121,8 @@ private struct RecentDownloadsView: View {
     @ObservedObject var model: RecentDownloadsModel
     let onDone: () -> Void
 
-    private static let dateFormatter: RelativeDateTimeFormatter = {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.locale = Locale(identifier: "pt_BR")
-        formatter.unitsStyle = .short
-        return formatter
-    }()
+    /// Not read, but observing it redraws the popover (its texts) when the language changes.
+    @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -138,7 +134,7 @@ private struct RecentDownloadsView: View {
 
             if let files = model.files {
                 if files.isEmpty {
-                    placeholder("Nenhum download")
+                    placeholder(L10n.noDownloads)
                 }
                 VStack(spacing: 0) {
                     ForEach(files) { file in
@@ -146,7 +142,7 @@ private struct RecentDownloadsView: View {
                     }
                 }
             } else {
-                placeholder("Sem acesso à pasta Downloads")
+                placeholder(L10n.noDownloadsAccess)
             }
 
             Rectangle().fill(Color.white.opacity(0.14)).frame(height: 1).padding(.horizontal, 8)
@@ -156,7 +152,7 @@ private struct RecentDownloadsView: View {
                 onDone()
             } label: {
                 HStack {
-                    Text("Abrir no Finder").font(Brand.sans(13, .medium))
+                    Text(L10n.openInFinder).font(Brand.sans(13, .medium))
                     Spacer()
                     Image(systemName: "arrow.up.forward").font(.system(size: 11, weight: .semibold))
                 }
@@ -195,7 +191,7 @@ private struct RecentDownloadsView: View {
                     .foregroundStyle(Brand.lua)
                     .lineLimit(1)
                     .truncationMode(.middle)
-                Text(Self.dateFormatter.localizedString(for: file.added, relativeTo: Date()))
+                Text(L10n.relative(file.added))
                     .font(Brand.mono(11))
                     .foregroundStyle(Brand.poeira)
             }

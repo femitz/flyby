@@ -57,7 +57,7 @@ struct PanelView: View {
 
             if !metrics.isEmpty {
                 VStack(alignment: .leading, spacing: 14) {
-                    BrandLabel("Telemetria")
+                    BrandLabel(L10n.telemetry)
                     HStack(alignment: .top, spacing: 8) {
                         ForEach(metrics) { metric in
                             TelemetryRing(
@@ -97,7 +97,7 @@ struct PanelView: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 2) {
-                BrandLabel("Tempo de missão")
+                BrandLabel(L10n.missionTime)
                 TimelineView(.periodic(from: .now, by: 1)) { context in
                     Text("T+ \(Self.missionTime(at: context.date))")
                         .font(Brand.mono(14))
@@ -139,16 +139,17 @@ struct PanelView: View {
             result.append(Metric(
                 id: "cpu", label: "CPU",
                 value: "\(Int(service.cpuUsage * 100))%",
-                detail: "\(ProcessInfo.processInfo.activeProcessorCount) núcleos",
+                detail: "\(ProcessInfo.processInfo.activeProcessorCount) \(L10n.cores)",
                 fraction: service.cpuUsage
             ))
         }
 
         if settings.monitorRAM {
-            let used = service.ramUsedGB.formatted(.number.precision(.fractionLength(1)))
-            let total = service.ramTotalGB.formatted(.number.precision(.fractionLength(0)))
+            let locale = settings.language.locale
+            let used = service.ramUsedGB.formatted(.number.precision(.fractionLength(1)).locale(locale))
+            let total = service.ramTotalGB.formatted(.number.precision(.fractionLength(0)).locale(locale))
             result.append(Metric(
-                id: "ram", label: "Memória",
+                id: "ram", label: L10n.memory,
                 value: "\(Int(service.ramUsage * 100))%",
                 detail: "\(used) / \(total) GB",
                 fraction: service.ramUsage
@@ -157,9 +158,9 @@ struct PanelView: View {
 
         if settings.monitorThermal {
             result.append(Metric(
-                id: "thermal", label: "Térmico",
+                id: "thermal", label: L10n.thermal,
                 value: service.thermalState.shortName,
-                detail: "Sistema",
+                detail: L10n.system,
                 fraction: service.thermalState.fraction
             ))
         }
@@ -172,9 +173,9 @@ struct PanelView: View {
     private var mixer: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline, spacing: 12) {
-                BrandLabel("Mixer")
+                BrandLabel(L10n.mixer)
                 Spacer()
-                Text(output.deviceName)
+                Text(output.deviceName ?? L10n.audioOutput)
                     .font(Brand.sans(12))
                     .foregroundStyle(Brand.poeira)
                     .lineLimit(1)
@@ -184,7 +185,7 @@ struct PanelView: View {
             if output.isAvailable {
                 MixerRow(
                     initials: "Σ",
-                    name: "Saída geral",
+                    name: L10n.mainOutput,
                     volume: Binding(get: { output.volume }, set: { output.setVolume($0) }),
                     range: 0...1,
                     isMuted: output.isMuted,
@@ -195,7 +196,7 @@ struct PanelView: View {
             if appVolume.isSupported {
                 let rows = appVolume.apps
                 if rows.isEmpty {
-                    Text("Toque áudio em um app e ele aparece aqui.")
+                    Text(L10n.mixerEmpty)
                         .font(Brand.sans(12))
                         .foregroundStyle(Brand.poeira)
                         .padding(.top, 4)
@@ -206,14 +207,14 @@ struct PanelView: View {
                     appRows(rows)
                 }
             } else {
-                Text("O volume por app exige macOS 14.2 ou mais recente.")
+                Text(L10n.mixerUnsupported)
                     .font(Brand.sans(12))
                     .foregroundStyle(Brand.poeira)
                     .padding(.top, 4)
             }
 
-            if let error = appVolume.errorMessage {
-                Text(error)
+            if let error = appVolume.error {
+                Text(L10n.appVolumeError(error))
                     .font(Brand.sans(11))
                     .foregroundStyle(Brand.ignicao)
                     .padding(.top, 4)
@@ -248,7 +249,7 @@ struct PanelView: View {
 
     private var footer: some View {
         HStack(spacing: 8) {
-            Text("Sinal estável · \(Int(service.refreshInterval)) s")
+            Text(L10n.steadySignal(interval: Int(service.refreshInterval)))
                 .font(Brand.mono(11))
                 .foregroundStyle(Brand.poeira)
 
@@ -259,14 +260,14 @@ struct PanelView: View {
                     state.showingPreferences = true
                 } label: {
                     HStack(spacing: 6) {
-                        Text("Preferências")
+                        Text(L10n.preferences)
                         if updater.updateAvailable {
                             Circle().fill(Brand.ignicao).frame(width: 6, height: 6)
-                                .accessibilityLabel("Atualização disponível")
+                                .accessibilityLabel(L10n.updateAvailable)
                         }
                     }
                 }
-                Button("Sair") { NSApp.terminate(nil) }
+                Button(L10n.quit) { NSApp.terminate(nil) }
             }
             .buttonStyle(BrandButtonStyle())
         }
@@ -281,6 +282,9 @@ struct MixerRow: View {
     let range: ClosedRange<Double>
     let isMuted: Bool
     let onToggleMute: () -> Void
+
+    /// Not read, but observing it redraws the row (its texts) when the language changes.
+    @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
         HStack(spacing: 12) {
@@ -297,7 +301,7 @@ struct MixerRow: View {
                         .foregroundStyle(Brand.lua)
                         .lineLimit(1)
                     Spacer()
-                    Text(isMuted ? "mudo" : "\(Int(volume * 100))%")
+                    Text(isMuted ? L10n.muted : "\(Int(volume * 100))%")
                         .font(Brand.mono(12))
                         .foregroundStyle(Brand.textSoft)
                 }
@@ -305,7 +309,7 @@ struct MixerRow: View {
                     value: $volume,
                     range: range,
                     fill: isMuted ? Brand.muted : Brand.ignicao,
-                    accessibilityName: "Volume de \(name)"
+                    accessibilityName: L10n.volume(of: name)
                 )
             }
 
@@ -317,7 +321,7 @@ struct MixerRow: View {
             }
             .buttonStyle(BrandButtonStyle())
             .padding(.horizontal, -14)
-            .accessibilityLabel(isMuted ? "Ativar som de \(name)" : "Silenciar \(name)")
+            .accessibilityLabel(isMuted ? L10n.unmute(name) : L10n.mute(name))
         }
         .opacity(isMuted ? 0.6 : 1)
     }
