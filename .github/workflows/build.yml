@@ -31,8 +31,31 @@ jobs:
         run: |
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${GITHUB_REF_NAME#v}" Resources/App/Info.plist
 
-      # The app is ad-hoc signed (not Developer ID / notarized): on first launch users
-      # must right-click > Open once or remove the quarantine attribute.
+      # Stable self-signed identity (see scripts/create-signing-cert.sh). It keeps the
+      # code identity the same across releases so macOS keeps the Accessibility grant
+      # after an update. Without the secrets the build falls back to ad-hoc signing.
+      - name: Import signing certificate
+        env:
+          SIGN_CERT_P12: ${{ secrets.FLYBY_SIGN_CERT_P12 }}
+          SIGN_CERT_PASSWORD: ${{ secrets.FLYBY_SIGN_CERT_PASSWORD }}
+        run: |
+          if [[ -z "$SIGN_CERT_P12" ]]; then
+            echo "::warning::FLYBY_SIGN_CERT_P12 not set; ad-hoc signing (permissions reset on every update)"
+            exit 0
+          fi
+          KEYCHAIN="$RUNNER_TEMP/flyby-signing.keychain-db"
+          KEYCHAIN_PASSWORD=$(uuidgen)
+          echo "$SIGN_CERT_P12" | base64 --decode > "$RUNNER_TEMP/flyby-signing.p12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 3600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/flyby-signing.p12" -k "$KEYCHAIN" -P "$SIGN_CERT_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          rm -f "$RUNNER_TEMP/flyby-signing.p12"
+
+      # Not Developer ID / notarized: on first launch users must right-click > Open once
+      # or remove the quarantine attribute.
       - name: Package app
         run: ./scripts/package-app.sh
 
