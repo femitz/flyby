@@ -11,6 +11,7 @@ Real-time system monitoring app for macOS (Apple Silicon M1+/M2+).
 - **Dashboard** - Detailed view with charts
 - **Auto-login** - Launch at login option
 - **Configurable** - Adjustable refresh interval
+- **Two languages** - The interface is available in English and Brazilian Portuguese. It follows the system language (Portuguese if macOS prefers it, English otherwise); pick one in `Preferences > Language` (`Idioma` in Portuguese) and it applies immediately
 - **Self-updating** - Checks GitHub Releases every 5 hours; one click in Preferences installs the new version
 
 ## Requirements

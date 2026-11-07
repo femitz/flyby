@@ -64,9 +64,11 @@ drawn in a 120×120 box). The dot at the start of the trail is the accent.
 
 ## Voice (UI copy)
 
-Portuguese (pt-BR), short, mission-control flavored but never cute: "Tempo de missão" (T+ = time since boot),
-"Telemetria", "Mixer", "Sinal estável", "Preferências", "Sair". Numbers in mono, units after a space ("5 s",
-"6,6 / 8 GB"). No exclamation marks, no emoji.
+Two languages, pt-BR and English, both in `Utilities/Localization.swift` (`L10n`); every new string needs both.
+Short, mission-control flavored but never cute: "Tempo de missão" / "Mission time" (T+ = time since boot),
+"Telemetria" / "Telemetry", "Mixer", "Sinal estável" / "Signal steady", "Preferências" / "Preferences",
+"Sair" / "Quit". Brand names (Flyby, Vácuo, Lua, Ignição) are not translated. Numbers in mono, units after a
+space ("5 s", "6,6 / 8 GB" in pt-BR, "6.6 / 8 GB" in English). No exclamation marks, no emoji.
 
 ## Do / don't
 

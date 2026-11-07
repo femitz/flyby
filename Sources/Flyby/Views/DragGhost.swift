@@ -56,10 +56,12 @@ private final class DragGhostModel: ObservableObject {
 
 private struct DragGhostView: View {
     @ObservedObject var model: DragGhostModel
+    /// Not read, but observing it redraws the view (its texts) when the language changes.
+    @ObservedObject private var settings = AppSettings.shared
 
     var body: some View {
         VStack(spacing: 6) {
-            Text("Remover")
+            Text(L10n.remove)
                 .font(Brand.sans(12, .medium))
                 .foregroundStyle(Brand.lua)
                 .padding(.horizontal, 10)

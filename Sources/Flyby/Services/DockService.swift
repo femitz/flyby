@@ -104,7 +104,7 @@ final class DockService: ObservableObject {
     }
 
     func addProfile() {
-        profiles.append(DockProfile(id: UUID(), name: "Perfil \(profiles.count + 1)", items: []))
+        profiles.append(DockProfile(id: UUID(), name: L10n.defaultProfileName(profiles.count + 1), items: []))
         commit()
     }
 
@@ -195,6 +195,21 @@ final class DockService: ObservableObject {
         guard let index = profiles.firstIndex(where: { $0.id == id }) else { return }
         change(&profiles[index])
         commit()
+    }
+
+    /// Profiles still carrying a default name ("Perfil 2", "Profile 2") follow the language;
+    /// a name the user typed is theirs and stays.
+    func localizeDefaultNames() {
+        var changed = false
+        for index in profiles.indices {
+            guard let number = L10n.defaultProfileNumber(of: profiles[index].name) else { continue }
+            let name = L10n.defaultProfileName(number)
+            if profiles[index].name != name {
+                profiles[index].name = name
+                changed = true
+            }
+        }
+        if changed { commit() }
     }
 
     private func commit() {
@@ -312,8 +327,8 @@ final class DockService: ObservableObject {
             return DockProfile(id: UUID(), name: name, items: items)
         }
         return [
-            profile("Perfil 1", ["com.apple.Safari", "com.google.Chrome", "com.spotify.client", "com.apple.systempreferences"]),
-            profile("Perfil 2", ["com.microsoft.VSCode", "com.anthropic.claudefordesktop", "com.apple.Terminal"]),
+            profile(L10n.defaultProfileName(1), ["com.apple.Safari", "com.google.Chrome", "com.spotify.client", "com.apple.systempreferences"]),
+            profile(L10n.defaultProfileName(2), ["com.microsoft.VSCode", "com.anthropic.claudefordesktop", "com.apple.Terminal"]),
         ]
     }
 }

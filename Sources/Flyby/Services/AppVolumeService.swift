@@ -14,6 +14,12 @@ struct AudioApp: Identifiable {
     let isPlaying: Bool
 }
 
+/// Why a tap could not be created. Kept as data, not text, so the message follows the
+/// language when it changes (worded by `L10n`).
+enum AppVolumeError: Equatable {
+    case controlFailed(app: String, detail: String)
+}
+
 /// Per-app volume control built on Core Audio process taps (macOS 14.2+).
 ///
 /// For an app whose volume is not 100%, a private tap mutes the app's own output and
@@ -27,7 +33,7 @@ final class AppVolumeService: ObservableObject {
     @Published private(set) var apps: [AudioApp] = []
     @Published private(set) var volumes: [String: Double] = [:]
     @Published private(set) var muted: Set<String> = []
-    @Published private(set) var errorMessage: String?
+    @Published private(set) var error: AppVolumeError?
 
     var isSupported: Bool {
         if #available(macOS 14.2, *) { return true }
@@ -66,7 +72,7 @@ final class AppVolumeService: ObservableObject {
         volumes.removeAll()
         muted.removeAll()
         apps = []
-        errorMessage = nil
+        error = nil
         stopListeningForOutputDeviceChanges()
     }
 
@@ -119,12 +125,11 @@ final class AppVolumeService: ObservableObject {
     private func createTap(for app: AudioApp, gain: Float) {
         do {
             taps[app.id] = try AppTap(processObjectIDs: app.processObjectIDs, gain: gain)
-            errorMessage = nil
+            error = nil
         } catch {
             volumes[app.id] = nil
             muted.remove(app.id)
-            errorMessage = "Não foi possível controlar \(app.name): \(error.localizedDescription) "
-                + "Permita o Flyby em Ajustes → Privacidade e Segurança → Gravação de Tela e Áudio do Sistema."
+            self.error = .controlFailed(app: app.name, detail: error.localizedDescription)
         }
     }
 

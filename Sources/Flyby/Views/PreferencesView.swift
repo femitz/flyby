@@ -22,14 +22,14 @@ struct PreferencesView: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
                 Button(action: onBack) {
-                    Label("Voltar", systemImage: "chevron.left")
+                    Label(L10n.back, systemImage: "chevron.left")
                 }
                 .buttonStyle(BrandButtonStyle())
                 .padding(.leading, -14)
 
                 Spacer()
 
-                Text("Preferências")
+                Text(L10n.preferences)
                     .font(Brand.sans(18, .semibold))
                     .tracking(-0.5)
                     .foregroundStyle(Brand.lua)
@@ -66,26 +66,26 @@ struct PreferencesView: View {
 
     private var sections: some View {
         VStack(alignment: .leading, spacing: 20) {
-            section("Monitores") {
+            section(L10n.monitors) {
                 toggle("CPU", isOn: $settings.monitorCPU)
-                toggle("Memória", isOn: $settings.monitorRAM)
-                toggle("Térmico", isOn: $settings.monitorThermal)
-                toggle("Volume por app", isOn: $settings.monitorAppVolume)
+                toggle(L10n.memory, isOn: $settings.monitorRAM)
+                toggle(L10n.thermal, isOn: $settings.monitorThermal)
+                toggle(L10n.perAppVolume, isOn: $settings.monitorAppVolume)
             }
 
             BrandDivider()
 
-            section("Dock") {
-                toggle("Dock do Flyby", isOn: $settings.customDockEnabled)
-                Text("Substitui o Dock do macOS enquanto estiver ligado. Ao desligar ou sair do Flyby, ele volta como estava.")
+            section(L10n.dock) {
+                toggle(L10n.flybyDock, isOn: $settings.customDockEnabled)
+                Text(L10n.flybyDockNote)
                     .font(Brand.sans(12))
                     .foregroundStyle(Brand.poeira)
                     .fixedSize(horizontal: false, vertical: true)
-                toggle("Ocultar automaticamente", isOn: $settings.dockAutoHide)
-                toggle("Apps abertos de outros perfis", isOn: $settings.dockShowRunningFromOtherProfiles)
+                toggle(L10n.dockAutoHide, isOn: $settings.dockAutoHide)
+                toggle(L10n.dockOtherProfiles, isOn: $settings.dockShowRunningFromOtherProfiles)
                 Button(action: onOpenDockProfiles) {
                     HStack {
-                        Text("Perfis")
+                        Text(L10n.profiles)
                             .font(Brand.sans(13, .medium))
                             .foregroundStyle(Brand.lua)
                         Spacer()
@@ -100,15 +100,15 @@ struct PreferencesView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Editar perfis do Dock")
+                .accessibilityLabel(L10n.editDockProfiles)
             }
 
             BrandDivider()
 
-            section("Rolagem") {
-                toggle("Inverter no mouse", isOn: $settings.reverseMouseScroll)
-                toggle("Inverter no trackpad", isOn: $settings.reverseTrackpadScroll)
-                Text("Inverte em relação à rolagem natural do macOS. Com ela ligada, inverter só o mouse deixa a roda como no Windows e o trackpad como está.")
+            section(L10n.scrolling) {
+                toggle(L10n.reverseMouse, isOn: $settings.reverseMouseScroll)
+                toggle(L10n.reverseTrackpad, isOn: $settings.reverseTrackpadScroll)
+                Text(L10n.scrollNote)
                     .font(Brand.sans(12))
                     .foregroundStyle(Brand.poeira)
                     .fixedSize(horizontal: false, vertical: true)
@@ -119,7 +119,7 @@ struct PreferencesView: View {
 
             BrandDivider()
 
-            section("Atualização") {
+            section(L10n.refresh) {
                 HStack(spacing: 6) {
                     ForEach(intervals, id: \.self) { interval in
                         let selected = Int(service.refreshInterval) == Int(interval)
@@ -139,20 +139,26 @@ struct PreferencesView: View {
 
             BrandDivider()
 
-            section("Ícone do app") {
+            section(L10n.appIcon) {
                 HStack(spacing: 12) {
                     ForEach(AppIconStyle.allCases) { style in
                         iconTile(style)
                     }
                 }
-                toggle("Ícone na barra de menus", isOn: $settings.showMenuBarIcon)
+                toggle(L10n.menuBarIcon, isOn: $settings.showMenuBarIcon)
                     .padding(.top, 4)
             }
 
             BrandDivider()
 
-            section("Sistema") {
-                toggle("Abrir ao iniciar sessão", isOn: Binding(
+            section(L10n.language) {
+                languagePicker
+            }
+
+            BrandDivider()
+
+            section(L10n.system) {
+                toggle(L10n.launchAtLogin, isOn: Binding(
                     get: { launchAtLogin },
                     set: {
                         launchAtLogin = $0
@@ -163,7 +169,7 @@ struct PreferencesView: View {
 
             BrandDivider()
 
-            section("Atualizações do app") {
+            section(L10n.appUpdates) {
                 updateRow
             }
         }
@@ -172,7 +178,7 @@ struct PreferencesView: View {
     private var updateRow: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Versão \(updater.currentVersion)")
+                Text(L10n.version(updater.currentVersion))
                     .font(Brand.sans(13, .medium))
                     .foregroundStyle(Brand.lua)
                 Text(updateStatus)
@@ -182,7 +188,7 @@ struct PreferencesView: View {
             }
             Spacer(minLength: 8)
             if case .available = updater.state {
-                Button("Instalar") { Task { await updater.install() } }
+                Button(L10n.install) { Task { await updater.install() } }
                     .buttonStyle(.plain)
                     .font(Brand.sans(13, .semibold))
                     .foregroundStyle(Brand.vacuo)
@@ -190,7 +196,7 @@ struct PreferencesView: View {
                     .frame(minHeight: 32)
                     .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(Brand.ignicao))
             } else {
-                Button("Buscar") { Task { await updater.check() } }
+                Button(L10n.check) { Task { await updater.check() } }
                     .buttonStyle(.plain)
                     .font(Brand.sans(13, .medium))
                     .foregroundStyle(Brand.lua)
@@ -205,12 +211,12 @@ struct PreferencesView: View {
 
     private var permissionRow: some View {
         HStack(spacing: 12) {
-            Text("Permita o Flyby em Acessibilidade para inverter a rolagem.")
+            Text(L10n.accessibilityPrompt)
                 .font(Brand.mono(11))
                 .foregroundStyle(Brand.ignicao)
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 8)
-            Button("Abrir Ajustes") { scrollReverser.openAccessibilitySettings() }
+            Button(L10n.openSettings) { scrollReverser.openAccessibilitySettings() }
                 .buttonStyle(.plain)
                 .font(Brand.sans(13, .medium))
                 .foregroundStyle(Brand.lua)
@@ -226,23 +232,29 @@ struct PreferencesView: View {
     }
 
     private var updateStatus: String {
-        switch updater.state {
-        case .idle:
-            return updater.lastCheck.map { "Última busca \(Self.relative($0)). Automática a cada 5 h." } ?? "Busca automática a cada 5 h."
-        case .checking: return "Buscando…"
-        case .upToDate: return "Você está na versão mais recente."
-        case .available(let version): return "Versão \(version) disponível."
-        case .downloading: return "Baixando…"
-        case .installing: return "Instalando… o Flyby vai reiniciar."
-        case .failed(let message): return message
-        }
+        L10n.updateStatus(updater.state, lastCheck: updater.lastCheck)
     }
 
-    private static func relative(_ date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.locale = Locale(identifier: "pt_BR")
-        formatter.unitsStyle = .short
-        return formatter.localizedString(for: date, relativeTo: Date())
+    private var languagePicker: some View {
+        HStack(spacing: 6) {
+            ForEach(Language.allCases) { language in
+                let selected = settings.language == language
+                Button { settings.language = language } label: {
+                    Text(language.nativeName)
+                        .font(Brand.sans(12, selected ? .medium : .regular))
+                        .foregroundStyle(selected ? Brand.lua : Brand.poeira)
+                        .frame(maxWidth: .infinity, minHeight: 32)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(selected ? Brand.orbita : Color.clear)
+                        )
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                    .accessibilityLabel(L10n.language + ": " + language.nativeName)
+                    .accessibilityAddTraits(selected ? .isSelected : [])
+            }
+        }
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
@@ -284,7 +296,7 @@ struct PreferencesView: View {
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Ícone \(style.displayName)")
+        .accessibilityLabel(L10n.iconAccessibility(style.displayName))
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

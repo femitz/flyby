@@ -19,7 +19,15 @@ final class UpdateService: ObservableObject {
         case available(version: String)
         case downloading
         case installing
-        case failed(String)
+        case failed(Failure)
+    }
+
+    /// Kept as data, not text, so the message follows the language when it changes.
+    enum Failure: Equatable {
+        case check
+        case notInstalled
+        case noPermission(folder: String)
+        case install(UpdateError)
     }
 
     @Published private(set) var state: State = .idle
@@ -95,7 +103,7 @@ final class UpdateService: ObservableObject {
                 state = .upToDate
             }
         } catch {
-            state = .failed("Não foi possível buscar atualizações.")
+            state = .failed(.check)
         }
     }
 
@@ -140,11 +148,11 @@ final class UpdateService: ObservableObject {
 
         let appURL = Bundle.main.bundleURL
         guard appURL.pathExtension == "app" else {
-            state = .failed("A atualização automática só funciona no app instalado.")
+            state = .failed(.notInstalled)
             return
         }
         guard FileManager.default.isWritableFile(atPath: appURL.deletingLastPathComponent().path) else {
-            state = .failed("Sem permissão para atualizar em \(appURL.deletingLastPathComponent().path).")
+            state = .failed(.noPermission(folder: appURL.deletingLastPathComponent().path))
             return
         }
 
@@ -172,7 +180,7 @@ final class UpdateService: ObservableObject {
             NSApp.terminate(nil)
         } catch {
             try? FileManager.default.removeItem(at: workDir)
-            state = .failed("Falha ao atualizar: \(error.localizedDescription)")
+            state = .failed(.install((error as? UpdateError) ?? .other(error.localizedDescription)))
         }
     }
 
@@ -225,21 +233,12 @@ final class UpdateService: ObservableObject {
         process.standardError = FileHandle.nullDevice
         try process.run()
         process.waitUntilExit()
-        guard process.terminationStatus == 0 else { throw UpdateError.commandFailed(path) }
+        guard process.terminationStatus == 0 else { throw UpdateError.commandFailed(tool: URL(fileURLWithPath: path).lastPathComponent) }
         return process.terminationStatus
     }
 
-    private enum UpdateError: LocalizedError {
-        case badResponse, missingAsset, badArchive, checksumMismatch, commandFailed(String)
-
-        var errorDescription: String? {
-            switch self {
-            case .badResponse: return "resposta inválida do GitHub"
-            case .missingAsset: return "arquivo da versão não encontrado"
-            case .badArchive: return "pacote inválido"
-            case .checksumMismatch: return "verificação de integridade falhou"
-            case .commandFailed(let path): return "\(URL(fileURLWithPath: path).lastPathComponent) falhou"
-            }
-        }
+    /// Why an install failed. Worded by `L10n`; `other` carries the system's own message.
+    enum UpdateError: Error, Equatable {
+        case badResponse, missingAsset, badArchive, checksumMismatch, commandFailed(tool: String), other(String)
     }
 }

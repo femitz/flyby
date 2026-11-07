@@ -7,6 +7,8 @@ struct DockProfilesView: View {
     let onBack: () -> Void
 
     @ObservedObject private var dock = DockService.shared
+    /// Not read, but observing it redraws the page (its texts) when the language changes.
+    @ObservedObject private var settings = AppSettings.shared
     @State private var dragging: DraggedApp?
     /// The profile whose app picker is open, if any.
     @State private var pickingFor: UUID?
@@ -23,20 +25,20 @@ struct DockProfilesView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Button(action: onBack) {
-                    Label("Voltar", systemImage: "chevron.left")
+                    Label(L10n.back, systemImage: "chevron.left")
                 }
                 .buttonStyle(BrandButtonStyle())
                 .padding(.leading, -14)
 
                 Spacer()
 
-                Text("Perfis do Dock")
+                Text(L10n.dockProfiles)
                     .font(Brand.sans(18, .semibold))
                     .tracking(-0.5)
                     .foregroundStyle(Brand.lua)
             }
 
-            Text("Ctrl + scroll em cima do Dock troca de perfil. Arraste um app do Finder para o Dock para incluí-lo no perfil ativo.")
+            Text(L10n.dockProfilesNote)
                 .font(Brand.sans(12))
                 .foregroundStyle(Brand.poeira)
                 .fixedSize(horizontal: false, vertical: true)
@@ -51,7 +53,7 @@ struct DockProfilesView: View {
             Button {
                 dock.addProfile()
             } label: {
-                Label("Novo perfil", systemImage: "plus")
+                Label(L10n.newProfile, systemImage: "plus")
             }
             .buttonStyle(BrandButtonStyle())
             .padding(.leading, -14)
@@ -98,7 +100,7 @@ private struct ProfileCard: View {
                     .frame(width: 6, height: 6)
                     .accessibilityHidden(true)
 
-                TextField("Nome do perfil", text: Binding(
+                TextField(L10n.profileName, text: Binding(
                     get: { profile.name },
                     set: { dock.renameProfile(profile.id, to: $0) }
                 ))
@@ -107,7 +109,7 @@ private struct ProfileCard: View {
                 .foregroundStyle(Brand.lua)
 
                 if !isActive {
-                    Button("Usar") { dock.activateProfile(profile.id) }
+                    Button(L10n.useProfile) { dock.activateProfile(profile.id) }
                         .buttonStyle(.plain)
                         .font(Brand.sans(12, .medium))
                         .foregroundStyle(Brand.lua)
@@ -127,8 +129,8 @@ private struct ProfileCard: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(!canRemove)
-                .help("Apagar perfil")
-                .accessibilityLabel("Apagar \(profile.name)")
+                .help(L10n.deleteProfile)
+                .accessibilityLabel(L10n.delete(profile.name))
             }
 
             LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
@@ -168,8 +170,8 @@ private struct ProfileCard: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .help("Adicionar apps")
-        .accessibilityLabel("Adicionar apps a \(profile.name)")
+        .help(L10n.addApps)
+        .accessibilityLabel(L10n.addApps(to: profile.name))
     }
 }
 
@@ -197,13 +199,13 @@ private struct AppTile: View {
                     }
                     .buttonStyle(.plain)
                     .offset(x: 5, y: -5)
-                    .accessibilityLabel("Remover \(entry.name)")
+                    .accessibilityLabel(L10n.removeApp(entry.name))
                 }
             }
             .onHover { hovering = $0 }
             .help(entry.name)
             .contextMenu {
-                Button("Remover do perfil", action: onRemove)
+                Button(L10n.removeFromProfile, action: onRemove)
             }
             .accessibilityElement(children: .contain)
             .accessibilityLabel(entry.name)
@@ -255,7 +257,7 @@ private struct AppPickerView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    BrandLabel("Apps de")
+                    BrandLabel(L10n.appsFor)
                     Text(profile.name)
                         .font(Brand.sans(18, .semibold))
                         .tracking(-0.5)
@@ -263,7 +265,7 @@ private struct AppPickerView: View {
                         .lineLimit(1)
                 }
                 Spacer()
-                Button("Concluir", action: onDone)
+                Button(L10n.done, action: onDone)
                     .buttonStyle(.plain)
                     .font(Brand.sans(13, .semibold))
                     .foregroundStyle(Brand.vacuo)
@@ -276,7 +278,7 @@ private struct AppPickerView: View {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 12))
                     .foregroundStyle(Brand.poeira)
-                TextField("Buscar app", text: $query)
+                TextField(L10n.searchApps, text: $query)
                     .textFieldStyle(.plain)
                     .font(Brand.sans(13))
                     .foregroundStyle(Brand.lua)
@@ -296,9 +298,9 @@ private struct AppPickerView: View {
             .frame(height: 380)
             .overlay {
                 if loading {
-                    Text("Procurando apps…").font(Brand.mono(11)).foregroundStyle(Brand.poeira)
+                    Text(L10n.findingApps).font(Brand.mono(11)).foregroundStyle(Brand.poeira)
                 } else if filtered.isEmpty {
-                    Text("Nenhum app encontrado").font(Brand.mono(11)).foregroundStyle(Brand.poeira)
+                    Text(L10n.noAppsFound).font(Brand.mono(11)).foregroundStyle(Brand.poeira)
                 }
             }
         }
