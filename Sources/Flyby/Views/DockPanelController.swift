@@ -112,7 +112,7 @@ final class DockDrag: ObservableObject {
 }
 
 /// Hosts the dock view: accepts the first click, tracks the pointer, drags icons around and
-/// turns Ctrl + scroll into profile switches.
+/// turns scrolling into profile switches.
 ///
 /// Icon drags are handled here in AppKit: SwiftUI drags did not start in this never-active
 /// window. A press goes to SwiftUI as usual (so clicks and menus work); once it moves a few
@@ -203,10 +203,6 @@ private final class DockHostingView<Content: View>: NSHostingView<Content> {
     }
 
     override func scrollWheel(with event: NSEvent) {
-        guard event.modifierFlags.contains(.control) else {
-            super.scrollWheel(with: event)
-            return
-        }
         if let step = gesture.step(for: event) {
             onProfileStep?(step)
         }
