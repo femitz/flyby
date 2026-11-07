@@ -27,7 +27,7 @@ The interface is available in English and Brazilian Portuguese. It follows the s
 An optional replacement for the macOS Dock, with the same glass look and profiles of apps.
 
 - **Profiles**: each profile is its own set of pinned apps, such as one for browsing and music and another for development
-- **Switch with Ctrl + scroll** while the pointer is over the Dock. A trackpad swipe switches once per gesture, and each mouse wheel notch switches one profile. A column of dots shows which profile is active
+- **Switch by scrolling** while the pointer is over the Dock. A trackpad swipe switches once per gesture, and each mouse wheel notch switches one profile. A column of dots shows which profile is active
 - **Drag and drop**: drag an app from Finder onto the Dock to pin it to the active profile, reorder icons by dragging, or drag a pinned app well outside the Dock to remove it
 - **Running apps** appear after the divider like on the native Dock. You can also show apps that are pinned to other profiles
 - **Downloads** icon: click it to see your latest files above the Dock and drag them to Finder, to other apps or to the Trash

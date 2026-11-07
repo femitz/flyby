@@ -164,8 +164,8 @@ enum L10n {
 
     static var dockProfiles: String { tr("Perfis do Dock", "Dock profiles") }
     static var dockProfilesNote: String {
-        tr("Ctrl + scroll em cima do Dock troca de perfil. Arraste um app do Finder para o Dock para incluí-lo no perfil ativo.",
-           "Ctrl + scroll over the Dock switches profile. Drag an app from Finder onto the Dock to add it to the active profile.")
+        tr("Rolar em cima do Dock troca de perfil. Arraste um app do Finder para o Dock para incluí-lo no perfil ativo.",
+           "Scrolling over the Dock switches profile. Drag an app from Finder onto the Dock to add it to the active profile.")
     }
     static var newProfile: String { tr("Novo perfil", "New profile") }
     static func defaultProfileName(_ number: Int) -> String { tr("Perfil \(number)", "Profile \(number)") }
