@@ -33,6 +33,7 @@ An optional replacement for the macOS Dock, with the same glass look and profile
 - **Downloads** icon: click it to see your latest files above the Dock and drag them to Finder, to other apps or to the Trash
 - **Trash** icon: opens the Trash, and files dropped on it are moved to the Trash. It always shows the empty icon, because macOS does not let apps see whether the Trash is full
 - **Auto-hide** on by default
+- **Hover effects**: pick how an icon reacts under the pointer (Magnify, Lift, Bounce, Wiggle or Spin) in `Preferences > Dock`, or turn them off
 - Finder is fixed and shows in every profile
 - It is off by default. While it is on, the native Dock is hidden. Turning it off or quitting Flyby restores your original Dock settings, and if Flyby crashes it restores them on the next launch
 
@@ -164,6 +165,7 @@ Flyby/
 │   │   ├── PreferencesView.swift
 │   │   ├── DockPanelController.swift      # Dock window, drag and scroll
 │   │   ├── DockView.swift
+│   │   ├── DockHoverEffect.swift          # Dock icon hover effects
 │   │   ├── DockProfilesView.swift         # Profile editor
 │   │   ├── DownloadsPopover.swift
 │   │   └── DragGhost.swift

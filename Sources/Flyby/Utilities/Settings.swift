@@ -36,6 +36,19 @@ final class AppSettings: ObservableObject {
         didSet { defaults.set(dockAutoHide, forKey: Self.dockAutoHideKey) }
     }
 
+    /// The dock icons react to the pointer (on by default); `dockHoverEffect` is how.
+    @Published var dockHoverEffectsEnabled: Bool {
+        didSet { defaults.set(dockHoverEffectsEnabled, forKey: Self.dockHoverEffectsEnabledKey) }
+    }
+    @Published var dockHoverEffect: DockHoverEffect {
+        didSet { defaults.set(dockHoverEffect.rawValue, forKey: Self.dockHoverEffectKey) }
+    }
+
+    /// The effect the dock draws right now, or nil when the user turned effects off.
+    var activeDockHoverEffect: DockHoverEffect? {
+        dockHoverEffectsEnabled ? dockHoverEffect : nil
+    }
+
     /// The interface language. Follows the system until the user picks one in Preferences.
     @Published var language: Language {
         didSet { defaults.set(language.rawValue, forKey: Self.languageKey) }
@@ -61,6 +74,8 @@ final class AppSettings: ObservableObject {
     private static let customDockEnabledKey = "customDockEnabled"
     private static let dockShowRunningFromOtherProfilesKey = "dockShowRunningFromOtherProfiles"
     private static let dockAutoHideKey = "dockAutoHide"
+    private static let dockHoverEffectsEnabledKey = "dockHoverEffectsEnabled"
+    private static let dockHoverEffectKey = "dockHoverEffect"
     private static let showMenuBarIconKey = "showMenuBarIcon"
     private static let monitorAppVolumeKey = "monitorAppVolume"
     private static let monitorCPUKey = "monitorCPU"
@@ -79,6 +94,8 @@ final class AppSettings: ObservableObject {
         showMenuBarIcon = Self.storedBool(Self.showMenuBarIconKey, in: defaults)
         customDockEnabled = defaults.bool(forKey: Self.customDockEnabledKey)
         dockAutoHide = Self.storedBool(Self.dockAutoHideKey, in: defaults)
+        dockHoverEffectsEnabled = Self.storedBool(Self.dockHoverEffectsEnabledKey, in: defaults)
+        dockHoverEffect = defaults.string(forKey: Self.dockHoverEffectKey).flatMap(DockHoverEffect.init(rawValue:)) ?? .magnify
         dockShowRunningFromOtherProfiles = defaults.bool(forKey: Self.dockShowRunningFromOtherProfilesKey)
         reverseMouseScroll = defaults.bool(forKey: Self.reverseMouseScrollKey)
         reverseTrackpadScroll = defaults.bool(forKey: Self.reverseTrackpadScrollKey)

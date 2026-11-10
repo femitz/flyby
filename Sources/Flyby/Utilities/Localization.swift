@@ -98,6 +98,20 @@ enum L10n {
     }
     static var dockAutoHide: String { tr("Ocultar automaticamente", "Auto-hide") }
     static var dockOtherProfiles: String { tr("Apps abertos de outros perfis", "Open apps from other profiles") }
+    static var dockHoverEffects: String { tr("Efeito ao passar o mouse", "Hover effect") }
+    static func hoverEffectName(_ effect: DockHoverEffect) -> String {
+        switch effect {
+        case .magnify: return tr("Ampliar", "Magnify")
+        case .lift: return tr("Elevar", "Lift")
+        case .bounce: return tr("Quicar", "Bounce")
+        case .wiggle: return tr("Balançar", "Wiggle")
+        case .spin: return tr("Girar", "Spin")
+        }
+    }
+    static func hoverEffectAccessibility(_ name: String) -> String { tr("Efeito \(name)", "\(name) effect") }
+    static var hoverEffectPreviewNote: String {
+        tr("Passe o mouse sobre um efeito para ver como fica.", "Hover over an effect to preview it.")
+    }
     static var profiles: String { tr("Perfis", "Profiles") }
     static var editDockProfiles: String { tr("Editar perfis do Dock", "Edit Dock profiles") }
     static var scrolling: String { tr("Rolagem", "Scrolling") }
