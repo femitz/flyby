@@ -231,6 +231,12 @@ private struct TrashIcon: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(DockIconButtonStyle())
+        .contextMenu {
+            Button(L10n.openInFinder) { service.openTrash() }
+            Divider()
+            // After the menu closes, so the confirmation is not run from inside its tracking.
+            Button(L10n.emptyTrash + "…") { DispatchQueue.main.async { service.emptyTrash() } }
+        }
         .onDrop(of: [.fileURL], isTargeted: $targeted) { providers in
             for provider in providers {
                 _ = provider.loadObject(ofClass: URL.self) { url, _ in
