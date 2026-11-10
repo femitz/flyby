@@ -45,10 +45,14 @@ struct PanelView: View {
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Brand.orbita, lineWidth: 1))
         .preferredColorScheme(.dark)
+        // Not a preference: on the macOS 27 SDK, onPreferenceChange at the root of this
+        // hosting controller stopped firing after the first value, so Preferences never
+        // got a taller window.
         .background(GeometryReader { proxy in
-            Color.clear.preference(key: PanelSizeKey.self, value: proxy.size)
+            Color.clear
+                .onAppear { state.onSizeChange?(proxy.size) }
+                .onChange(of: proxy.size) { state.onSizeChange?($0) }
         })
-        .onPreferenceChange(PanelSizeKey.self) { state.onSizeChange?($0) }
     }
 
     private var mainContent: some View {
@@ -327,7 +331,3 @@ struct MixerRow: View {
     }
 }
 
-private struct PanelSizeKey: PreferenceKey {
-    static var defaultValue: CGSize = .zero
-    static func reduce(value: inout CGSize, nextValue: () -> CGSize) { value = nextValue() }
-}

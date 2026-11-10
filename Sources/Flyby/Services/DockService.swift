@@ -43,6 +43,11 @@ final class DockService: ObservableObject {
 
     enum SwitchDirection { case forward, backward }
 
+    /// True while a profile swap slides; the dock clips its profile row only then, so hover
+    /// effects can rise above the row the rest of the time.
+    @Published private(set) var isSwitching = false
+    private var switchGeneration = 0
+
     /// Shown in every profile.
     private let fixedItems = [DockItem(bundleID: "com.apple.finder", path: "/System/Library/CoreServices/Finder.app")]
 
@@ -89,9 +94,17 @@ final class DockService: ObservableObject {
         guard profiles.count > 1, offset != 0 else { return }
         let index = (activeProfileIndex + offset % profiles.count + profiles.count) % profiles.count
         lastSwitch = offset > 0 ? .forward : .backward
+        switchGeneration += 1
+        let generation = switchGeneration
         withAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
+            isSwitching = true
             activeProfileID = profiles[index].id
             refresh()
+        }
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            guard let self, self.switchGeneration == generation else { return }
+            self.isSwitching = false
         }
         save()
     }

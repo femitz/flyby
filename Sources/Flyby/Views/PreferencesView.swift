@@ -83,6 +83,10 @@ struct PreferencesView: View {
                     .fixedSize(horizontal: false, vertical: true)
                 toggle(L10n.dockAutoHide, isOn: $settings.dockAutoHide)
                 toggle(L10n.dockOtherProfiles, isOn: $settings.dockShowRunningFromOtherProfiles)
+                toggle(L10n.dockHoverEffects, isOn: $settings.dockHoverEffectsEnabled)
+                if settings.dockHoverEffectsEnabled {
+                    hoverEffectPicker
+                }
                 Button(action: onOpenDockProfiles) {
                     HStack {
                         Text(L10n.profiles)
@@ -235,6 +239,23 @@ struct PreferencesView: View {
         L10n.updateStatus(updater.state, lastCheck: updater.lastCheck)
     }
 
+    /// One tile per effect; hovering a tile plays its effect on the Flyby icon.
+    private var hoverEffectPicker: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                ForEach(DockHoverEffect.allCases) { effect in
+                    HoverEffectTile(effect: effect, selected: settings.dockHoverEffect == effect, iconStyle: settings.appIcon) {
+                        settings.dockHoverEffect = effect
+                    }
+                }
+            }
+            Text(L10n.hoverEffectPreviewNote)
+                .font(Brand.sans(12))
+                .foregroundStyle(Brand.poeira)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
     private var languagePicker: some View {
         HStack(spacing: 6) {
             ForEach(Language.allCases) { language in
@@ -297,6 +318,47 @@ struct PreferencesView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(L10n.iconAccessibility(style.displayName))
+        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}
+
+/// A dock hover effect to pick, previewed on a small Flyby icon while the pointer is over it.
+private struct HoverEffectTile: View {
+    let effect: DockHoverEffect
+    let selected: Bool
+    let iconStyle: AppIconStyle
+    let action: () -> Void
+
+    @State private var hovering = false
+    private let side: CGFloat = 26
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                AppIconArtwork(style: iconStyle, weight: .heavy)
+                    .frame(width: side, height: side)
+                    .dockHoverEffect(effect, active: hovering, side: side)
+                    .padding(.top, 10)
+                Text(effect.displayName)
+                    .font(Brand.sans(11, selected ? .medium : .regular))
+                    .foregroundStyle(selected ? Brand.lua : Brand.poeira)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .frame(maxWidth: .infinity, minHeight: 64)
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(selected ? Brand.orbita : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(Brand.orbita, lineWidth: 1)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering = $0 }
+        .accessibilityLabel(L10n.hoverEffectAccessibility(effect.displayName))
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

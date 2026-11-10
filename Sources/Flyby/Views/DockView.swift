@@ -12,25 +12,41 @@ struct DockView: View {
     let onDownloads: () -> Void
 
     @State private var dropTargeted = false
+    @State private var iconFrames: [DockIconFrame] = []
+    /// Redraws the dock when the hover effect changes (it sets the headroom).
+    @ObservedObject private var settings = AppSettings.shared
 
     private let cornerRadius: CGFloat = 18
-    /// Clear space above the glass where hover labels appear. It is part of the window, but
-    /// clicks on its transparent pixels go through to the windows behind.
-    static let labelHeadroom: CGFloat = 32
+    static let iconSize: CGFloat = 48
+
+    /// How far the hovered icon stays above its slot with the chosen effect.
+    static var hoverRise: CGFloat {
+        (AppSettings.shared.activeDockHoverEffect?.rise(for: iconSize) ?? 0).rounded(.up)
+    }
+
+    /// Clear space above the glass where hover labels (and a raised icon) appear. It is part
+    /// of the window, but clicks on its transparent pixels go through to the windows behind.
+    static var labelHeadroom: CGFloat { 32 + hoverRise }
+
+    /// The icon under the pointer, if any. None while an icon is dragged.
+    private var hovered: DockIconFrame? {
+        guard drag.session == nil, let location = pointer.location else { return nil }
+        return iconFrames.last { $0.frame.contains(location) }
+    }
 
     var body: some View {
-        dock
+        let hovered = hovered
+        return dock
             .padding(.top, Self.labelHeadroom)
+            .environment(\.dockHoveredID, hovered?.id)
             .coordinateSpace(name: DockSlots.space)
             .onPreferenceChange(DockSlots.self) { drag.slots = $0 }
-            .overlayPreferenceValue(DockIconFrames.self) { frames in
-                GeometryReader { proxy in
-                    if drag.session == nil, let location = pointer.location,
-                       let hovered = frames.last(where: { proxy[$0.bounds].contains(location) }) {
-                        let rect = proxy[hovered.bounds]
-                        HoverLabel(text: hovered.name)
-                            .position(x: rect.midX, y: rect.minY - 18)
-                    }
+            .onPreferenceChange(DockIconFrames.self) { iconFrames = $0 }
+            // Drawn here rather than on each icon, so the clipped profile row cannot cut it off.
+            .overlay {
+                if let hovered {
+                    HoverLabel(text: hovered.name)
+                        .position(x: hovered.frame.midX, y: hovered.frame.minY - 18 - Self.hoverRise)
                 }
             }
     }
@@ -127,7 +143,9 @@ struct DockView: View {
                 removal: .move(edge: forward ? .top : .bottom).combined(with: .opacity)
             ))
         }
-        .clipped()
+        // Clipped to the row only while the rows slide; otherwise a hovered icon may grow
+        // past it, up into the headroom and over its neighbours.
+        .clipShape(service.isSwitching ? OverflowClip.none : OverflowClip(top: Self.labelHeadroom, sides: 24, bottom: 6))
     }
 }
 
@@ -168,7 +186,8 @@ private struct DockIcon: View {
                 Image(nsImage: entry.icon)
                     .resizable()
                     .interpolation(.high)
-                    .frame(width: 48, height: 48)
+                    .frame(width: DockView.iconSize, height: DockView.iconSize)
+                    .dockHover(entry.id)
                 Circle()
                     .fill(Brand.ignicao)
                     .frame(width: 4, height: 4)
@@ -186,7 +205,7 @@ private struct DockIcon: View {
                 value: [DockDrag.Slot(id: entry.id, section: section, frame: proxy.frame(in: .named(DockSlots.space)))]
             )
         })
-        .dockLabel(entry.name)
+        .dockLabel(id: entry.id, name: entry.name)
         .accessibilityLabel(entry.name)
         .accessibilityValue(entry.isRunning ? L10n.running : "")
     }
@@ -212,6 +231,7 @@ extension DockIcon {
 /// Opens the Trash; files dropped on it go to the Trash, like on the native Dock.
 /// Always the empty icon: macOS keeps ~/.Trash private, so Flyby cannot see if it is full.
 private struct TrashIcon: View {
+    static let hoverID = "flyby.trash"
     let service: DockService
     @State private var targeted = false
     /// Not read, but observing it redraws the view (its texts) when the language changes.
@@ -223,8 +243,9 @@ private struct TrashIcon: View {
                 Image(nsImage: NSImage(named: NSImage.trashEmptyName) ?? NSImage())
                     .resizable()
                     .interpolation(.high)
-                    .frame(width: 48, height: 48)
+                    .frame(width: DockView.iconSize, height: DockView.iconSize)
                     .brightness(targeted ? 0.15 : 0)
+                    .dockHover(Self.hoverID)
                 Color.clear.frame(width: 4, height: 4)
             }
             .padding(.horizontal, 2)
@@ -246,13 +267,14 @@ private struct TrashIcon: View {
             }
             return true
         }
-        .dockLabel(L10n.trash)
+        .dockLabel(id: Self.hoverID, name: L10n.trash)
         .accessibilityLabel(L10n.trash)
     }
 }
 
 /// The Downloads folder: a click shows the latest files above it (see DownloadsPopover).
 private struct DownloadsIcon: View {
+    static let hoverID = "flyby.downloads"
     let action: () -> Void
     private let folder = DownloadsStack.folder
 
@@ -262,14 +284,15 @@ private struct DownloadsIcon: View {
                 Image(nsImage: NSWorkspace.shared.icon(forFile: folder.path))
                     .resizable()
                     .interpolation(.high)
-                    .frame(width: 48, height: 48)
+                    .frame(width: DockView.iconSize, height: DockView.iconSize)
+                    .dockHover(Self.hoverID)
                 Color.clear.frame(width: 4, height: 4)
             }
             .padding(.horizontal, 2)
             .contentShape(Rectangle())
         }
         .buttonStyle(DockIconButtonStyle())
-        .dockLabel(FileManager.default.displayName(atPath: folder.path))
+        .dockLabel(id: Self.hoverID, name: FileManager.default.displayName(atPath: folder.path))
         .accessibilityLabel(FileManager.default.displayName(atPath: folder.path))
     }
 }
@@ -292,11 +315,12 @@ private struct HoverLabel: View {
     }
 }
 
-/// Icon frames for the hover labels. They are drawn at the top of the dock view instead of
-/// on each icon, so the clipped profile row cannot cut them off.
-private struct DockIconFrame {
+/// Where each icon is, in the dock view's coordinates, to find the one under the pointer
+/// (for its label and hover effect).
+private struct DockIconFrame: Equatable {
+    let id: String
     let name: String
-    let bounds: Anchor<CGRect>
+    let frame: CGRect
 }
 
 /// Icon positions for dragging, in the dock view's coordinates (which match the hosting
@@ -317,8 +341,58 @@ private struct DockIconFrames: PreferenceKey {
 }
 
 private extension View {
-    func dockLabel(_ name: String) -> some View {
-        anchorPreference(key: DockIconFrames.self, value: .bounds) { [DockIconFrame(name: name, bounds: $0)] }
+    func dockLabel(id: String, name: String) -> some View {
+        background(GeometryReader { proxy in
+            Color.clear.preference(
+                key: DockIconFrames.self,
+                value: [DockIconFrame(id: id, name: name, frame: proxy.frame(in: .named(DockSlots.space)))]
+            )
+        })
+    }
+
+    /// The chosen hover effect, played while the pointer is over the icon with this id.
+    func dockHover(_ id: String) -> some View {
+        modifier(DockIconHover(id: id))
+    }
+}
+
+private struct DockHoveredIDKey: EnvironmentKey {
+    static let defaultValue: String? = nil
+}
+
+private extension EnvironmentValues {
+    /// The id of the icon under the pointer, set by DockView.
+    var dockHoveredID: String? {
+        get { self[DockHoveredIDKey.self] }
+        set { self[DockHoveredIDKey.self] = newValue }
+    }
+}
+
+private struct DockIconHover: ViewModifier {
+    let id: String
+    @Environment(\.dockHoveredID) private var hoveredID
+    @ObservedObject private var settings = AppSettings.shared
+
+    func body(content: Content) -> some View {
+        content.dockHoverEffect(settings.activeDockHoverEffect, active: hoveredID == id, side: DockView.iconSize)
+    }
+}
+
+/// The view's own rectangle grown by the given margins, so content may overflow it that far.
+private struct OverflowClip: Shape {
+    var top: CGFloat = 0
+    var sides: CGFloat = 0
+    var bottom: CGFloat = 0
+
+    static let none = OverflowClip()
+
+    func path(in rect: CGRect) -> Path {
+        Path(CGRect(
+            x: rect.minX - sides,
+            y: rect.minY - top,
+            width: rect.width + sides * 2,
+            height: rect.height + top + bottom
+        ))
     }
 }
 

@@ -73,7 +73,10 @@ final class PanelController: NSObject, NSWindowDelegate {
         state.availableHeight = top - visible.minY - 8
         hosting.view.layoutSubtreeIfNeeded()
 
-        let size = hosting.view.fittingSize
+        // Not `fittingSize`: with empty sizingOptions the hosting view adds no constraints,
+        // and on the macOS 27 SDK that makes fittingSize 0 × 0 (an invisible panel).
+        let ideal = hosting.sizeThatFits(in: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
+        let size = CGSize(width: ideal.width.rounded(.up), height: ideal.height.rounded(.up))
         var x = anchor.midX - size.width / 2
         x = min(max(x, visible.minX + 8), visible.maxX - size.width - 8)
 
