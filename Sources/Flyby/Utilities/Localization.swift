@@ -197,6 +197,17 @@ enum L10n {
     static func removeFrom(_ profile: String) -> String { tr("Remover de \(profile)", "Remove from \(profile)") }
     static func keepIn(_ profile: String) -> String { tr("Manter em \(profile)", "Keep in \(profile)") }
     static var trash: String { tr("Lixeira", "Trash") }
+    static var emptyTrash: String { tr("Esvaziar Lixeira", "Empty Trash") }
+    static var emptyTrashConfirm: String {
+        tr("Apagar permanentemente os itens da Lixeira?", "Permanently erase the items in the Trash?")
+    }
+    static var emptyTrashConfirmNote: String { tr("Não é possível desfazer esta ação.", "You can't undo this action.") }
+    static var cancel: String { tr("Cancelar", "Cancel") }
+    static var emptyTrashFailed: String { tr("Não foi possível esvaziar a Lixeira", "Couldn't empty the Trash") }
+    static var emptyTrashNeedsPermission: String {
+        tr("Permita que o Flyby controle o Finder em Ajustes → Privacidade e Segurança → Automação.",
+           "Allow Flyby to control Finder in Settings → Privacy & Security → Automation.")
+    }
 
     // MARK: Downloads
 

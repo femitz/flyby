@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSAudioCaptureUsageDescription</key>
 	<string>Flyby uses audio capture to change the volume of individual apps.</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>Flyby asks Finder to empty the Trash from the Dock's Trash menu.</string>
 	<key>NSDownloadsFolderUsageDescription</key>
 	<string>Flyby lists your latest downloads in the Dock's Downloads menu.</string>
 	<key>NSHighResolutionCapable</key>

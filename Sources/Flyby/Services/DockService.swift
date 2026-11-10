@@ -250,6 +250,63 @@ final class DockService: ObservableObject {
         }
     }
 
+    /// Asks Finder to empty the Trash after a confirmation, like the native Dock. Flyby
+    /// cannot touch ~/.Trash itself, so Finder does it (Automation permission, asked once).
+    /// Finder's own warning is switched off for the call and put back, so the user is asked
+    /// once, here, whatever Finder is set to.
+    func emptyTrash() {
+        NSApp.activate(ignoringOtherApps: true)
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = L10n.emptyTrashConfirm
+        alert.informativeText = L10n.emptyTrashConfirmNote
+        alert.addButton(withTitle: L10n.emptyTrash).hasDestructiveAction = true
+        alert.addButton(withTitle: L10n.cancel)
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+
+        Self.scriptQueue.async {
+            let source = """
+            tell application "Finder"
+                set previousWarning to warns before emptying of trash
+                set warns before emptying of trash to false
+                try
+                    empty trash
+                end try
+                set warns before emptying of trash to previousWarning
+            end tell
+            """
+            var error: NSDictionary?
+            NSAppleScript(source: source)?.executeAndReturnError(&error)
+            guard let error else { return }
+            let code = error[NSAppleScript.errorNumber] as? Int
+            let message = error[NSAppleScript.errorMessage] as? String
+            DispatchQueue.main.async { Self.reportEmptyTrashFailure(code: code, message: message) }
+        }
+    }
+
+    /// NSAppleScript is not thread-safe; one serial queue keeps the Finder calls off the main thread.
+    private static let scriptQueue = DispatchQueue(label: "Flyby.emptyTrash")
+
+    private static func reportEmptyTrashFailure(code: Int?, message: String?) {
+        // -128: the user cancelled. -1743: Flyby is not allowed to control Finder.
+        guard code != -128 else { return }
+        let needsPermission = code == -1743
+        NSLog("Flyby Dock: could not empty the Trash (\(code ?? 0)): \(message ?? "")")
+        NSApp.activate(ignoringOtherApps: true)
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = L10n.emptyTrashFailed
+        alert.informativeText = needsPermission ? L10n.emptyTrashNeedsPermission : (message ?? "")
+        if needsPermission {
+            alert.addButton(withTitle: L10n.openSettings)
+            alert.addButton(withTitle: L10n.cancel)
+        }
+        if alert.runModal() == .alertFirstButtonReturn, needsPermission,
+           let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Automation") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+
     func quit(_ entry: DockEntry) {
         NSRunningApplication.runningApplications(withBundleIdentifier: entry.id).forEach { $0.terminate() }
     }
