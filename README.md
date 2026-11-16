@@ -8,6 +8,14 @@ A macOS menu bar app for Apple Silicon that shows what your Mac is doing and giv
 
 The interface is available in English and Brazilian Portuguese. It follows the system language (Portuguese if macOS prefers it, English otherwise) and can be changed any time in `Preferences > Language`; the change applies immediately. Item names below are the English ones; in Portuguese they are Preferências, Perfis, Atualizações do app and so on.
 
+<p align="center">
+  <video src="docs/flyby-demo-en.mp4" controls muted width="480">
+    <a href="docs/flyby-demo-en.mp4">Watch the demo video</a>
+  </video>
+  <br>
+  <sub>Demo, 23 s. <a href="docs/flyby-demo-pt.mp4">Versão em português</a></sub>
+</p>
+
 ## Features
 
 ### Monitoring
