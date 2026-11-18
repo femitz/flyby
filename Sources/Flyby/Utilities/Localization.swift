@@ -23,7 +23,11 @@ enum Language: String, CaseIterable, Identifiable {
     }
 
     /// The language the interface is drawn in right now.
-    static var current: Language { AppSettings.shared.language }
+    static var current: Language { override ?? AppSettings.shared.language }
+
+    /// Pins the language for the code run inside `Language.$override.withValue(...)`, without
+    /// touching the stored setting. Used by the tests to draw strings in a given language.
+    @TaskLocal static var override: Language?
 }
 
 /// Every string the user can read. Each one is written in both languages side by side, so a

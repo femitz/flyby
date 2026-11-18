@@ -1,6 +1,6 @@
 # Contributing to Flyby
 
-Pull requests are welcome. Fork the repository, make your change on a branch and open a PR. Build and run instructions are in the [README](README.md) and `CLAUDE.md`. Commit subjects are short and imperative with a prefix (`feat:`, `fix:`, `docs:`, `build:`).
+Pull requests are welcome. Fork the repository, make your change on a branch and open a PR. Build and run instructions are in the [README](README.md) and `CLAUDE.md`. Run `swift test` before opening the PR; CI runs it too. Commit subjects are short and imperative with a prefix (`feat:`, `fix:`, `docs:`, `build:`).
 
 ## License of contributions
 

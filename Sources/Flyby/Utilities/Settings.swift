@@ -5,7 +5,7 @@ import SwiftUI
 final class AppSettings: ObservableObject {
     static let shared = AppSettings()
     
-    private let defaults = UserDefaults.standard
+    private let defaults: UserDefaults
     @Published var monitorCPU: Bool {
         didSet { defaults.set(monitorCPU, forKey: Self.monitorCPUKey) }
     }
@@ -86,7 +86,9 @@ final class AppSettings: ObservableObject {
         defaults.object(forKey: key) == nil ? true : defaults.bool(forKey: key)
     }
     
-    private init() {
+    /// `defaults` is `.standard` in the app; the tests pass a throwaway suite.
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
         monitorCPU = Self.storedBool(Self.monitorCPUKey, in: defaults)
         monitorRAM = Self.storedBool(Self.monitorRAMKey, in: defaults)
         monitorThermal = Self.storedBool(Self.monitorThermalKey, in: defaults)

@@ -127,11 +127,17 @@ final class UpdateService: ObservableObject {
             throw UpdateError.missingAsset
         }
         let sums = payload.assets.first(where: { $0.name == "SHA256SUMS" })
-        let version = payload.tag_name.hasPrefix("v") ? String(payload.tag_name.dropFirst()) : payload.tag_name
-        return Release(version: version, zipURL: zip.browser_download_url, checksumsURL: sums?.browser_download_url)
+        return Release(version: Self.version(fromTag: payload.tag_name), zipURL: zip.browser_download_url, checksumsURL: sums?.browser_download_url)
     }
 
-    static func isNewer(_ candidate: String, than current: String) -> Bool {
+    /// "v1.2.3" -> "1.2.3". Release tags are `vX.Y.Z`; a tag without the prefix is kept as is.
+    nonisolated static func version(fromTag tag: String) -> String {
+        tag.hasPrefix("v") ? String(tag.dropFirst()) : tag
+    }
+
+    /// Compares dotted versions numerically ("1.10" > "1.9"); missing parts count as 0 and
+    /// suffixes after the digits ("2-beta") are ignored.
+    nonisolated static func isNewer(_ candidate: String, than current: String) -> Bool {
         func parts(_ s: String) -> [Int] { s.split(separator: ".").map { Int($0.prefix { $0.isNumber }) ?? 0 } }
         let a = parts(candidate), b = parts(current)
         for i in 0..<max(a.count, b.count) {
@@ -187,14 +193,23 @@ final class UpdateService: ObservableObject {
     private func verifyChecksum(of file: URL, release: Release) async throws {
         guard let sumsURL = release.checksumsURL else { return }   // older releases may lack it
         let (data, _) = try await URLSession.shared.data(from: sumsURL)
-        let text = String(decoding: data, as: UTF8.self)
-        guard let line = text.split(separator: "\n").first(where: { $0.hasSuffix(Self.assetName) }),
-              let expected = line.split(separator: " ").first
+        guard let expected = Self.expectedChecksum(of: Self.assetName, in: String(decoding: data, as: UTF8.self))
         else { throw UpdateError.checksumMismatch }
 
-        let digest = SHA256.hash(data: try Data(contentsOf: file, options: .mappedIfSafe))
-        let actual = digest.map { String(format: "%02x", $0) }.joined()
-        guard actual == expected.lowercased() else { throw UpdateError.checksumMismatch }
+        let actual = Self.sha256Hex(try Data(contentsOf: file, options: .mappedIfSafe))
+        guard actual == expected else { throw UpdateError.checksumMismatch }
+    }
+
+    /// The lowercased hash listed for `asset` in a `shasum -a 256` file ("<hash>  <name>" per line).
+    nonisolated static func expectedChecksum(of asset: String, in sums: String) -> String? {
+        sums.split(whereSeparator: \.isNewline)
+            .first { $0.hasSuffix(asset) }?
+            .split(separator: " ").first
+            .map { $0.lowercased() }
+    }
+
+    nonisolated static func sha256Hex(_ data: Data) -> String {
+        SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
     }
 
     /// Detached helper: wait for this process to exit, swap the bundle, relaunch, clean up.

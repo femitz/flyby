@@ -126,6 +126,8 @@ If macOS warns that the app is from an unidentified developer, right-click `Flyb
 
 Running `swift run Flyby` also works for development, but it is not an `.app` bundle: the in-app updater will not install and permission prompts behave differently.
 
+Run the unit tests with `swift test`.
+
 ## How It Works
 
 ### Menu bar
@@ -183,6 +185,7 @@ Flyby/
 │       ├── AppIcon.swift                  # App icons drawn in code
 │       └── InstallerBackground.swift      # DMG background drawn in code
 ├── Resources/App/                         # Info.plist and Flyby.icns
+├── Tests/FlybyTests/                      # Unit tests (swift test)
 ├── scripts/                               # Packaging, install and DMG scripts
 └── Package.swift
 ```
