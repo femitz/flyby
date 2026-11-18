@@ -15,6 +15,32 @@ struct DockProfile: Codable, Identifiable, Equatable {
     var items: [DockItem]
 }
 
+/// Editing a profile's app list. Pure, so `DockService` only resolves apps and persists.
+extension DockProfile {
+    /// Appends items in order, skipping the fixed apps and apps already in the profile.
+    mutating func append(_ newItems: [DockItem], excluding fixedIDs: Set<String>) {
+        for item in newItems where !fixedIDs.contains(item.bundleID) {
+            guard !items.contains(where: { $0.bundleID == item.bundleID }) else { continue }
+            items.append(item)
+        }
+    }
+
+    /// Moves an app to the position of another app in the profile.
+    mutating func move(_ bundleID: String, to targetBundleID: String) {
+        guard let from = items.firstIndex(where: { $0.bundleID == bundleID }),
+              let to = items.firstIndex(where: { $0.bundleID == targetBundleID }),
+              from != to else { return }
+        items.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+    }
+
+    /// Puts an app at `index`, moving it if it is already in the profile. The index counts the
+    /// other apps only and is clamped to the list.
+    mutating func place(_ item: DockItem, at index: Int) {
+        let item = items.firstIndex { $0.bundleID == item.bundleID }.map { items.remove(at: $0) } ?? item
+        items.insert(item, at: min(max(index, 0), items.count))
+    }
+}
+
 /// A resolved app, ready to draw in the dock.
 struct DockEntry: Identifiable {
     let id: String
@@ -92,7 +118,7 @@ final class DockService: ObservableObject {
     /// Moves to the next (+1) or previous (-1) profile, wrapping around at the ends.
     func switchProfile(by offset: Int) {
         guard profiles.count > 1, offset != 0 else { return }
-        let index = (activeProfileIndex + offset % profiles.count + profiles.count) % profiles.count
+        let index = Self.profileIndex(from: activeProfileIndex, by: offset, count: profiles.count)
         lastSwitch = offset > 0 ? .forward : .backward
         switchGeneration += 1
         let generation = switchGeneration
@@ -107,6 +133,11 @@ final class DockService: ObservableObject {
             self.isSwitching = false
         }
         save()
+    }
+
+    /// The index `offset` steps away from `current`, wrapping around both ends.
+    nonisolated static func profileIndex(from current: Int, by offset: Int, count: Int) -> Int {
+        ((current + offset) % count + count) % count
     }
 
     // MARK: Editing
@@ -137,14 +168,11 @@ final class DockService: ObservableObject {
 
     /// Adds apps at the end of a profile, skipping non-apps, duplicates and the fixed apps.
     func addApps(_ urls: [URL], to id: UUID) {
-        let fixedIDs = Set(fixedItems.map(\.bundleID))
-        update(id) { profile in
-            for url in urls where url.pathExtension == "app" {
-                let bundleID = Bundle(url: url)?.bundleIdentifier ?? url.path
-                guard !fixedIDs.contains(bundleID), !profile.items.contains(where: { $0.bundleID == bundleID }) else { continue }
-                profile.items.append(DockItem(bundleID: bundleID, path: url.path))
-            }
+        let newItems = urls.filter { $0.pathExtension == "app" }.map { url in
+            DockItem(bundleID: Bundle(url: url)?.bundleIdentifier ?? url.path, path: url.path)
         }
+        let fixedIDs = Set(fixedItems.map(\.bundleID))
+        update(id) { $0.append(newItems, excluding: fixedIDs) }
     }
 
     func removeApp(_ bundleID: String, from id: UUID) {
@@ -153,24 +181,14 @@ final class DockService: ObservableObject {
 
     /// Moves an app to the position of another app in the same profile.
     func moveApp(_ bundleID: String, to targetBundleID: String, in id: UUID) {
-        update(id) { profile in
-            guard let from = profile.items.firstIndex(where: { $0.bundleID == bundleID }),
-                  let to = profile.items.firstIndex(where: { $0.bundleID == targetBundleID }),
-                  from != to else { return }
-            profile.items.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
-        }
+        update(id) { $0.move(bundleID, to: targetBundleID) }
     }
 
     /// Puts an app at `index` of a profile: moves it if it is already there, pins it if not
     /// (an open app dragged into the profile). The index counts the other apps only.
     func placeApp(_ entry: DockEntry, at index: Int, in id: UUID) {
         guard !isFixed(entry) else { return }
-        update(id) { profile in
-            let item = profile.items.firstIndex { $0.bundleID == entry.id }
-                .map { profile.items.remove(at: $0) }
-                ?? DockItem(bundleID: entry.id, path: entry.url.path)
-            profile.items.insert(item, at: min(max(index, 0), profile.items.count))
-        }
+        update(id) { $0.place(DockItem(bundleID: entry.id, path: entry.url.path), at: index) }
     }
 
     /// The sound the native Dock plays when an icon is dragged off it.

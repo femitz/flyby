@@ -6,7 +6,8 @@ Flyby is a macOS menu bar app (Swift Package, no Xcode project, Apple Silicon, m
 
 ## Commands
 
-- `swift build` / `swift build -c release`: compile (there is no `Tests/` target yet, so `swift test` has nothing to run).
+- `swift build` / `swift build -c release`: compile.
+- `swift test`: unit tests in `Tests/FlybyTests` (Swift Testing, `@testable import Flyby` straight from the executable target). `.github/workflows/test.yml` runs them on every PR and push to `main`.
 - `swift run Flyby`: run from the package. This is not an `.app` bundle, so the in-app updater refuses to install (it needs `Bundle.main.bundleURL` to end in `.app`) and audio-capture permission prompts behave differently.
 - `./scripts/package-app.sh`: builds release and assembles an ad-hoc signed `dist/Flyby.app` (copies `Resources/App/Info.plist` and `Flyby.icns`).
 - `./scripts/install-app.sh`: packages, copies to `/Applications` (or `~/Applications`) and opens it.
@@ -25,6 +26,10 @@ Flyby is a macOS menu bar app (Swift Package, no Xcode project, Apple Silicon, m
 - **Settings** (`Utilities/Settings.swift`): `AppSettings.shared` wraps `UserDefaults`; booleans default to `true` when unset.
 - **Localization** (`Utilities/Localization.swift`): `Language` (pt-BR / en, stored in `AppSettings.language`, defaulting to the system language) and `L10n`, where every user-visible string lives with both translations side by side. Never hardcode UI text in a view or service. A view that shows `L10n` text must observe `AppSettings.shared` (child views are skipped on redraw otherwise), and text that outlives a view (errors, updater states) is stored as data (`UpdateService.Failure`, `AppVolumeError`) and worded in `L10n` at draw time. Plain Swift tables, not `.strings`/String Catalogs, because the `.app` is assembled by hand and the switch is in-app, not per system locale.
 - **Design** (`Design/Brand.swift`): palette, fonts and shared components (`BrandLabel`, `BrandDivider`, `BrandButtonStyle`, `TelemetryRing`, `BrandSlider`). Use these instead of ad-hoc colors. App icons and the DMG background are drawn in code (`Utilities/AppIcon.swift`, `InstallerBackground.swift`), not stored as images.
+
+## Tests
+
+Tests cover logic only, never UI, Core Audio or other system services. Keep testable logic in pure, `nonisolated` static functions or value-type methods (for example `UpdateService.isNewer`, `DockProfile.move`) instead of reaching into the `.shared` singletons. `AppSettings(defaults:)` takes a throwaway `UserDefaults` suite, and `Language.$override.withValue(_:)` pins the language for `L10n` without touching the stored setting.
 
 ## Brand rules
 
